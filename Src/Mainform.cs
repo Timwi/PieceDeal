@@ -628,7 +628,11 @@ namespace PieceDeal
             float h = fontSizeFromHeight(e.Graphics, "Calibri", FontStyle.Regular, pieceSize);
             e.Graphics.DrawString("Score:", new Font("Calibri", h / 2, FontStyle.Regular), new SolidBrush(Color.Lime), scorePos.X, scorePos.Y + pieceSize / 2, new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Center });
             e.Graphics.DrawString(score.ToString(), new Font("Calibri", h * 3 / 4, FontStyle.Bold), new SolidBrush(Color.White), scorePos.X + gameSize.Width / 3 + 10 * pieceSize / 3, scorePos.Y + pieceSize / 2, new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Center });
-            // e.Graphics.DrawString(jokerTarget.ToString(), Font, new SolidBrush(Color.Black), new Point(scorePos.X, scorePos.Y + 20));
+
+            h = fontSizeFromHeight(e.Graphics, "Calibri", FontStyle.Regular, pieceSize / 3);
+            e.Graphics.DrawString("Next joker at:", new Font("Calibri", h, FontStyle.Regular), new SolidBrush(Color.Lime), new Point(jokersPos.X + 4 * pieceSize, jokersPos.Y), new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Near });
+            h = fontSizeFromHeight(e.Graphics, "Calibri", FontStyle.Regular, pieceSize * 2 / 3);
+            e.Graphics.DrawString(jokerTarget.ToString(), new Font("Calibri", h, FontStyle.Regular), new SolidBrush(Color.White), new Point(jokersPos.X + 4 * pieceSize, jokersPos.Y + pieceSize), new StringFormat { LineAlignment = StringAlignment.Far, Alignment = StringAlignment.Far });
 
             for (int i = 0; i < stock.Length; i++)
                 if (stock[i] != null)
