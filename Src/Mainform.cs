@@ -13,56 +13,13 @@ using System.Drawing.Imaging;
 using RT.Util.Drawing;
 using RT.Util.Forms;
 using System.IO;
+using System.Drawing.Text;
+using RT.Util.Dialogs;
 
 namespace PieceDeal
 {
     public partial class Mainform : ManagedForm
     {
-        private class DraggableObject { }
-        private class Piece : DraggableObject, IEqualityComparer<Piece>, IEquatable<Piece>
-        {
-            public int Number;
-            public int Col;
-            public bool Locked;
-
-            public bool Equals(Piece x, Piece y)
-            {
-                return x.Col == y.Col && x.Number == y.Number;
-            }
-
-            public int GetHashCode(Piece obj)
-            {
-                return (Col.ToString() + Number.ToString()).GetHashCode();
-            }
-
-            public bool Equals(Piece other)
-            {
-                return other.Col == Col && other.Number == Number;
-            }
-        }
-
-        private class Joker : DraggableObject
-        {
-            public int IndexX;
-            public int IndexY;
-            public bool Locked;
-        }
-
-        private class Slot
-        {
-            public SlotType Type;
-            public int IndexX;
-            public int IndexY;
-        }
-
-        private Piece[] stock;
-        private Piece[][] board;
-        private Joker[] jokersUnplaced;
-        private Joker[] jokersPlaced;
-        private int jokerTarget;
-        private int jokerTargetStep;
-        private int score;
-
         private int leftMargin;
         private int topMargin;
         private Size gameSize;
@@ -74,7 +31,6 @@ namespace PieceDeal
         private Rectangle dealButton;
 
         private DraggableObject dragging;
-        private enum SlotType { Stock, Board, Joker };
         private Slot draggingFrom;
         private int draggingX;
         private int draggingY;
@@ -100,38 +56,31 @@ namespace PieceDeal
 
             InitializeComponent();
             recalculateSizes();
-            startGame();
         }
 
-        private void startGame()
+        private void startNewGame()
         {
-            stock = new Piece[4];
-            board = new[] { new Piece[4], new Piece[4], new Piece[4], new Piece[4] };
-            jokersUnplaced = new Joker[2];
-            jokersPlaced = new Joker[0];
-            score = 0;
-            jokerTarget = 250;
-            jokerTargetStep = 250;
+            Program.Settings.StartNewGame();
             pnlMain.Refresh();
         }
 
         private void recalculateSizes()
         {
-            int pieceSizeX = ClientSize.Width / 7;
-            int pieceSizeY = ClientSize.Height / 8;
+            int pieceSizeX = pnlMain.ClientSize.Width / 7;
+            int pieceSizeY = pnlMain.ClientSize.Height / 8;
 
             if (pieceSizeX > pieceSizeY)
             {
                 pieceSize = pieceSizeY;
-                gameSize = new Size(pieceSize * 7, ClientSize.Height);
-                leftMargin = (ClientSize.Width - gameSize.Width) / 2;
+                gameSize = new Size(pieceSize * 7, pnlMain.ClientSize.Height);
+                leftMargin = (pnlMain.ClientSize.Width - gameSize.Width) / 2;
                 topMargin = 0;
             }
             else
             {
                 pieceSize = pieceSizeX;
-                gameSize = new Size(ClientSize.Width, pieceSize * 8);
-                topMargin = (ClientSize.Height - gameSize.Height) / 2;
+                gameSize = new Size(pnlMain.ClientSize.Width, pieceSize * 8);
+                topMargin = (pnlMain.ClientSize.Height - gameSize.Height) / 2;
                 leftMargin = 0;
             }
             stockPos = new Point(leftMargin + (gameSize.Width - 5 * pieceSize) / 3, topMargin + (gameSize.Height - 6 * pieceSize) / 2 + pieceSize);
@@ -176,19 +125,19 @@ namespace PieceDeal
             var sitesToClear = new List<int[]>();
             foreach (var site in sites)
             {
-                if (site.Any(s => board[s / 4][s % 4] == null && !jokersPlaced.Any(j => j.IndexX == s % 4 && j.IndexY == s / 4)))
+                if (site.Any(s => Program.Settings.Board[s / 4][s % 4] == null && !Program.Settings.JokersOnBoard.Any(j => j.IndexX == s % 4 && j.IndexY == s / 4)))
                     continue;
-                if (site.All(s => board[s / 4][s % 4] != null && board[s / 4][s % 4].Locked && !jokersPlaced.Any(j => j.IndexX == s % 4 && j.IndexY == s / 4)))
+                if (site.All(s => Program.Settings.Board[s / 4][s % 4] != null && Program.Settings.Board[s / 4][s % 4].Locked && !Program.Settings.JokersOnBoard.Any(j => j.IndexX == s % 4 && j.IndexY == s / 4 && !j.Locked)))
                     continue;
 
                 int pointsGained = 0;
-                int numJokers = site.Count(s => jokersPlaced.Any(j => j.IndexX == s % 4 && j.IndexY == s / 4));
+                int numJokers = site.Count(s => Program.Settings.JokersOnBoard.Any(j => j.IndexX == s % 4 && j.IndexY == s / 4));
 
                 if (numJokers == 0)
                 {
-                    var pieces = site.Select(s => board[s / 4][s % 4]);
-                    var numbers = pieces.Select(d => d.Number);
-                    var colors = pieces.Select(d => d.Col);
+                    var pieces = site.Select(s => Program.Settings.Board[s / 4][s % 4]);
+                    var numbers = pieces.Select(d => d.Shape);
+                    var colors = pieces.Select(d => d.Colour);
 
                     if (numbers.Distinct().Count() == 1 && colors.Distinct().Count() == 1) // all the same
                     {
@@ -229,9 +178,9 @@ namespace PieceDeal
                 }
                 else if (numJokers == 1)
                 {
-                    var pieces = site.Where(s => !jokersPlaced.Any(j => j.IndexX == s % 4 && j.IndexY == s / 4)).Select(s => board[s / 4][s % 4]);
-                    var numbers = pieces.Select(d => d.Number);
-                    var colors = pieces.Select(d => d.Col);
+                    var pieces = site.Where(s => !Program.Settings.JokersOnBoard.Any(j => j.IndexX == s % 4 && j.IndexY == s / 4)).Select(s => Program.Settings.Board[s / 4][s % 4]);
+                    var numbers = pieces.Select(d => d.Shape);
+                    var colors = pieces.Select(d => d.Colour);
 
                     if (numbers.Distinct().Count() == 1 && colors.Distinct().Count() == 1) // all the same
                     {
@@ -272,9 +221,9 @@ namespace PieceDeal
                 {
                     if (numJokers == 2)
                     {
-                        var pieces = site.Where(s => !jokersPlaced.Any(j => j.IndexX == s % 4 && j.IndexY == s / 4)).Select(s => board[s / 4][s % 4]).ToArray();
-                        var numbers = new[] { pieces[0].Number, pieces[1].Number };
-                        var colors = new[] { pieces[0].Col, pieces[1].Col };
+                        var pieces = site.Where(s => !Program.Settings.JokersOnBoard.Any(j => j.IndexX == s % 4 && j.IndexY == s / 4)).Select(s => Program.Settings.Board[s / 4][s % 4]).ToArray();
+                        var numbers = new[] { pieces[0].Shape, pieces[1].Shape };
+                        var colors = new[] { pieces[0].Colour, pieces[1].Colour };
 
                         if (numbers[0] == numbers[1] && colors[0] == colors[1]) // all the same
                             pointsGained = 200;
@@ -290,44 +239,44 @@ namespace PieceDeal
                     sitesToClear.Add(site);
                 }
 
-                score += pointsGained;
-
-                if (score >= jokerTarget)
-                {
-                    if (jokersUnplaced[0] == null)
-                        jokersUnplaced[0] = new Joker();
-                    else if (jokersUnplaced[1] == null)
-                        jokersUnplaced[1] = new Joker();
-                    else
-                        score += 1000;
-                    if (jokerTargetStep < 1500)
-                        jokerTargetStep += 250;
-                    jokerTarget += jokerTargetStep;
-                }
+                Program.Settings.Score += pointsGained;
             }
             int spacesCleared = sitesToClear.SelectMany(s => s).Distinct().Count();
             if (spacesCleared > 4)
             {
                 int bonus = (spacesCleared - 4) * 50;
-                score += bonus;
+                Program.Settings.Score += bonus;
             }
             foreach (var s in sitesToClear)
                 foreach (var index in s)
-                    board[index / 4][index % 4] = null;
-            jokersPlaced = jokersPlaced.Where(j => !sitesToClear.SelectMany(s => s).Any(s => j.IndexX == s % 4 && j.IndexY == s / 4)).ToArray();
+                    Program.Settings.Board[index / 4][index % 4] = null;
+            Program.Settings.JokersOnBoard = Program.Settings.JokersOnBoard.Where(j => !sitesToClear.SelectMany(s => s).Any(s => j.IndexX == s % 4 && j.IndexY == s / 4)).ToArray();
+
+            if (Program.Settings.Score >= Program.Settings.NextJokerAt)
+            {
+                if (Program.Settings.UnusedJokers[0] == null)
+                    Program.Settings.UnusedJokers[0] = new Joker();
+                else if (Program.Settings.UnusedJokers[1] == null)
+                    Program.Settings.UnusedJokers[1] = new Joker();
+                else
+                    Program.Settings.Score += 1000;
+                if (Program.Settings.NextJokerAtStep < 1500)
+                    Program.Settings.NextJokerAtStep += 250;
+                Program.Settings.NextJokerAt += Program.Settings.NextJokerAtStep;
+            }
 
             // lock pieces on the board
             for (int y = 0; y < 4; y++)
                 for (int x = 0; x < 4; x++)
-                    if (board[y][x] != null)
-                        board[y][x].Locked = true;
-            foreach (var j in jokersPlaced)
+                    if (Program.Settings.Board[y][x] != null)
+                        Program.Settings.Board[y][x].Locked = true;
+            foreach (var j in Program.Settings.JokersOnBoard)
                 j.Locked = true;
 
             // create new pieces if the stock is empty
-            if (stock.All(d => d == null))
-                for (int i = 0; i < Math.Min(stock.Length, board.SelectMany(s => s).Count(d => d == null)); i++)
-                    stock[i] = new Piece { Col = Ut.Rnd.Next(0, 4), Number = Ut.Rnd.Next(0, 4), Locked = false };
+            if (Program.Settings.Stock.All(d => d == null))
+                for (int i = 0; i < Math.Min(Program.Settings.Stock.Length, Program.Settings.FreeSpaces); i++)
+                    Program.Settings.Stock[i] = new Piece { Colour = Ut.Rnd.Next(0, 4), Shape = Ut.Rnd.Next(0, 4), Locked = false };
 
             pnlMain.Refresh();
         }
@@ -337,10 +286,10 @@ namespace PieceDeal
             if (e.X >= stockPos.X && e.X < stockPos.X + pieceSize && e.Y >= stockPos.Y && e.Y < stockPos.Y + 4 * pieceSize)
             {
                 var index = (e.Y - stockPos.Y) / pieceSize;
-                if (stock[index] != null)
+                if (Program.Settings.Stock[index] != null)
                 {
-                    dragging = stock[index];
-                    stock[index] = null;
+                    dragging = Program.Settings.Stock[index];
+                    Program.Settings.Stock[index] = null;
                     draggingX = e.X;
                     draggingY = e.Y;
                     draggingFrom = new Slot { IndexX = index, Type = SlotType.Stock };
@@ -353,34 +302,34 @@ namespace PieceDeal
                 var index = dfy * 4 + dfx;
                 draggingX = e.X;
                 draggingY = e.Y;
-                if (jokersPlaced.Any(j => j.IndexX == dfx && j.IndexY == dfy && !j.Locked))
+                if (Program.Settings.JokersOnBoard.Any(j => j.IndexX == dfx && j.IndexY == dfy && !j.Locked))
                 {
                     draggingFrom = new Slot { Type = SlotType.Board, IndexX = dfx, IndexY = dfy };
-                    dragging = jokersPlaced.First(j => j.IndexX == dfx && j.IndexY == dfy);
-                    jokersPlaced = jokersPlaced.Where(j => j.IndexX != dfx || j.IndexY != dfy).ToArray();
+                    dragging = Program.Settings.JokersOnBoard.First(j => j.IndexX == dfx && j.IndexY == dfy);
+                    Program.Settings.JokersOnBoard = Program.Settings.JokersOnBoard.Where(j => j.IndexX != dfx || j.IndexY != dfy).ToArray();
                 }
-                else if (board[dfy][dfx] != null && !board[dfy][dfx].Locked)
+                else if (Program.Settings.Board[dfy][dfx] != null && !Program.Settings.Board[dfy][dfx].Locked)
                 {
                     draggingFrom = new Slot { Type = SlotType.Board, IndexX = dfx, IndexY = dfy };
-                    dragging = board[dfy][dfx];
-                    board[dfy][dfx] = null;
+                    dragging = Program.Settings.Board[dfy][dfx];
+                    Program.Settings.Board[dfy][dfx] = null;
                 }
             }
-            else if (jokersUnplaced[0] != null && e.X >= jokersPos.X && e.X < jokersPos.X + pieceSize && e.Y >= jokersPos.Y && e.Y < jokersPos.Y + pieceSize)
+            else if (Program.Settings.UnusedJokers[0] != null && e.X >= jokersPos.X && e.X < jokersPos.X + pieceSize && e.Y >= jokersPos.Y && e.Y < jokersPos.Y + pieceSize)
             {
                 draggingFrom = new Slot { Type = SlotType.Joker, IndexX = 1 };
-                dragging = jokersUnplaced[0];
+                dragging = Program.Settings.UnusedJokers[0];
                 draggingX = e.X;
                 draggingY = e.Y;
-                jokersUnplaced[0] = null;
+                Program.Settings.UnusedJokers[0] = null;
             }
-            else if (jokersUnplaced[1] != null && e.X >= jokersPos.X + pieceSize && e.X < jokersPos.X + 2 * pieceSize && e.Y >= jokersPos.Y && e.Y < jokersPos.Y + pieceSize)
+            else if (Program.Settings.UnusedJokers[1] != null && e.X >= jokersPos.X + pieceSize && e.X < jokersPos.X + 2 * pieceSize && e.Y >= jokersPos.Y && e.Y < jokersPos.Y + pieceSize)
             {
                 draggingFrom = new Slot { Type = SlotType.Joker, IndexX = 2 };
-                dragging = jokersUnplaced[1];
+                dragging = Program.Settings.UnusedJokers[1];
                 draggingX = e.X;
                 draggingY = e.Y;
-                jokersUnplaced[1] = null;
+                Program.Settings.UnusedJokers[1] = null;
             }
             else
                 draggingFrom = null;
@@ -428,29 +377,29 @@ namespace PieceDeal
             if (!(dragging is Joker) && x >= stockPos.X && x < stockPos.X + pieceSize && y >= stockPos.Y && y < stockPos.Y + 4 * pieceSize)
             {
                 var targetIndex = (y - stockPos.Y) / pieceSize;
-                if (stock[targetIndex] == null)
+                if (Program.Settings.Stock[targetIndex] == null)
                     return new Slot { Type = SlotType.Stock, IndexX = targetIndex };
             }
             else if (!(dragging is Joker) && x >= boardPos.X && x < boardPos.X + 4 * pieceSize && y >= boardPos.Y && y < boardPos.Y + 4 * pieceSize)
             {
                 int dfx = (x - boardPos.X) / pieceSize;
                 int dfy = (y - boardPos.Y) / pieceSize;
-                if (board[dfy][dfx] == null && !jokersPlaced.Any(j => j.IndexX == dfx && j.IndexY == dfy && j.Locked))
+                if (Program.Settings.Board[dfy][dfx] == null && !Program.Settings.JokersOnBoard.Any(j => j.IndexX == dfx && j.IndexY == dfy && j.Locked))
                     return new Slot { Type = SlotType.Board, IndexX = dfx, IndexY = dfy };
             }
             else if (dragging is Joker && x >= boardPos.X && x < boardPos.X + 4 * pieceSize && y >= boardPos.Y && y < boardPos.Y + 4 * pieceSize)
             {
                 int dfx = (x - boardPos.X) / pieceSize;
                 int dfy = (y - boardPos.Y) / pieceSize;
-                if (!jokersPlaced.Any(j => j.IndexX == dfx && j.IndexY == dfy))
+                if (!Program.Settings.JokersOnBoard.Any(j => j.IndexX == dfx && j.IndexY == dfy))
                     return new Slot { Type = SlotType.Board, IndexX = dfx, IndexY = dfy };
             }
             else if (dragging is Joker && x >= jokersPos.X && x < jokersPos.X + 2 * pieceSize && y >= jokersPos.Y && y < jokersPos.Y + pieceSize)
             {
                 bool ontoFirst = x < jokersPos.X + pieceSize;
-                if (ontoFirst && jokersUnplaced[0] == null)
+                if (ontoFirst && Program.Settings.UnusedJokers[0] == null)
                     return new Slot { IndexX = 0, Type = SlotType.Joker };
-                else if (!ontoFirst && jokersUnplaced[1] == null)
+                else if (!ontoFirst && Program.Settings.UnusedJokers[1] == null)
                     return new Slot { IndexX = 1, Type = SlotType.Joker };
             }
             return null;
@@ -475,29 +424,29 @@ namespace PieceDeal
             if (dt == null)
             {
                 if (draggingFrom.Type == SlotType.Board && dragging is Joker)
-                    jokersPlaced = jokersPlaced.Add((Joker) dragging).ToArray();
+                    Program.Settings.JokersOnBoard = Program.Settings.JokersOnBoard.Add((Joker) dragging).ToArray();
                 else if (draggingFrom.Type == SlotType.Board)
-                    board[draggingFrom.IndexY][draggingFrom.IndexX] = (Piece) dragging;
+                    Program.Settings.Board[draggingFrom.IndexY][draggingFrom.IndexX] = (Piece) dragging;
                 else if (draggingFrom.Type == SlotType.Stock)
-                    stock[draggingFrom.IndexX] = (Piece) dragging;
+                    Program.Settings.Stock[draggingFrom.IndexX] = (Piece) dragging;
                 else if (draggingFrom.Type == SlotType.Joker)
                 {
                     if (draggingFrom.IndexX == 0)
-                        jokersUnplaced[0] = (Joker) dragging;
+                        Program.Settings.UnusedJokers[0] = (Joker) dragging;
                     else if (draggingFrom.IndexX == 1)
-                        jokersUnplaced[1] = (Joker) dragging;
+                        Program.Settings.UnusedJokers[1] = (Joker) dragging;
                 }
             }
             else if (dt.Type == SlotType.Stock && dragging is Piece)
-                stock[dt.IndexX] = (Piece) dragging;
+                Program.Settings.Stock[dt.IndexX] = (Piece) dragging;
             else if (dt.Type == SlotType.Board && dragging is Joker)
-                jokersPlaced = jokersPlaced.Add(new Joker() { Locked = false, IndexX = dt.IndexX, IndexY = dt.IndexY }).ToArray();
+                Program.Settings.JokersOnBoard = Program.Settings.JokersOnBoard.Add(new Joker() { Locked = false, IndexX = dt.IndexX, IndexY = dt.IndexY }).ToArray();
             else if (dt.Type == SlotType.Board && dragging is Piece)
-                board[dt.IndexY][dt.IndexX] = (Piece) dragging;
+                Program.Settings.Board[dt.IndexY][dt.IndexX] = (Piece) dragging;
             else if (dt.Type == SlotType.Joker && dt.IndexX == 0 && dragging is Joker)
-                jokersUnplaced[0] = (Joker) dragging;
+                Program.Settings.UnusedJokers[0] = (Joker) dragging;
             else if (dt.Type == SlotType.Joker && dt.IndexX == 1 && dragging is Joker)
-                jokersUnplaced[1] = (Joker) dragging;
+                Program.Settings.UnusedJokers[1] = (Joker) dragging;
 
             FMOD.Channel ch = null;
             Program.FModSystem.playSound(FMOD.CHANNELINDEX.FREE, sndPutDown, false, ref ch);
@@ -529,10 +478,34 @@ namespace PieceDeal
             return low;
         }
 
+        private float fontSizeFromWidth(Graphics g, string fontName, FontStyle style, float targetWidth, string targetString)
+        {
+            float low = 1;
+            float high = 100;
+            float width = g.MeasureString(targetString, new Font(fontName, high, style)).Width;
+            while (width < targetWidth)
+            {
+                low = high;
+                high *= 2;
+                width = g.MeasureString(targetString, new Font(fontName, high, style)).Width;
+            }
+            while (high - low > 1)
+            {
+                width = g.MeasureString(targetString, new Font(fontName, (low + high) / 2, style)).Width;
+                if (width > targetWidth)
+                    high = (high + low) / 2;
+                else
+                    low = (high + low) / 2;
+            }
+            return low;
+        }
+
         private void paint(object sender, PaintEventArgs e)
         {
             e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
             e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+            e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
+
             if (draggingFrom != null)
             {
                 var dt = dragTarget(draggingX, draggingY);
@@ -565,6 +538,18 @@ namespace PieceDeal
                 e.Graphics.DrawImage(Resources.dealpressed, dealButton);
             else
                 e.Graphics.DrawImage(Resources.deal, dealButton);
+
+            if (Program.Settings.IsGameOver && dragging == null)
+            {
+                GraphicsPath inside = new GraphicsPath();
+                inside.AddString("GAME OVER", new FontFamily("Impact"), (int) FontStyle.Bold, Math.Min(fontSizeFromHeight(e.Graphics, "Impact", FontStyle.Bold, pnlMain.ClientSize.Height / 2), fontSizeFromWidth(e.Graphics, "Impact", FontStyle.Bold, pnlMain.ClientSize.Width * 7 / 8, "GAME OVER")),
+                    new Point(pnlMain.ClientSize.Width / 2, pnlMain.ClientSize.Height / 2), new StringFormat { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center });
+                GraphicsPath outside = (GraphicsPath) inside.Clone();
+                outside.Widen(new Pen(Color.White, Math.Min(pnlMain.ClientSize.Width, pnlMain.ClientSize.Height) / 30) { LineJoin = LineJoin.Round });
+                var bounds = outside.GetBounds();
+                e.Graphics.FillPath(new LinearGradientBrush(bounds.Location, new PointF(bounds.Right, bounds.Bottom), Color.FromArgb(192, 128, 0, 0), Color.FromArgb(192, 32, 0, 0)), outside);
+                e.Graphics.FillPath(new LinearGradientBrush(bounds.Location, new PointF(bounds.Right, bounds.Bottom), Color.FromArgb(255, 128, 0), Color.FromArgb(255, 0, 0)), inside);
+            }
         }
 
         private void paintBuffer(object sender, PaintEventArgs e)
@@ -597,7 +582,7 @@ namespace PieceDeal
                             g.TranslateTransform(x, y);
                             g.RotateTransform((float) (Ut.Rnd.NextDouble() * 40 - 20));
                             var i = Ut.Rnd.Next(0, 24);
-                            g.FillEllipse(new SolidBrush(Color.FromArgb((darker ? 124 : 134) + i, (darker ? 81 : 88) + i / 2, (darker ? 39 : 43) + i / 3)), -20, -30, 20, 30);
+                            g.FillEllipse(new SolidBrush(Color.FromArgb((darker ? 120 : 134) + i, (darker ? 78 : 88) + i / 2, (darker ? 37 : 43) + i / 3)), -20, -30, 20, 30);
                             g.ResetTransform();
                         }
                     }
@@ -605,20 +590,21 @@ namespace PieceDeal
                 }
             }
 
-            if (ClientSize.Width > background.Width * ClientSize.Height / background.Height)
+            if (pnlMain.ClientSize.Width > background.Width * pnlMain.ClientSize.Height / background.Height)
             {
-                int newWidth = ClientSize.Width;
+                int newWidth = pnlMain.ClientSize.Width;
                 int newHeight = newWidth * background.Height / background.Width;
-                e.Graphics.DrawImage(background, new Rectangle(0, (ClientSize.Height - newHeight) / 2, newWidth, newHeight));
+                e.Graphics.DrawImage(background, new Rectangle(0, (pnlMain.ClientSize.Height - newHeight) / 2, newWidth, newHeight));
             }
             else
             {
-                int newHeight = ClientSize.Height;
+                int newHeight = pnlMain.ClientSize.Height;
                 int newWidth = newHeight * background.Width / background.Height;
-                e.Graphics.DrawImage(background, new Rectangle((ClientSize.Width - newWidth) / 2, 0, newWidth, newHeight));
+                e.Graphics.DrawImage(background, new Rectangle((pnlMain.ClientSize.Width - newWidth) / 2, 0, newWidth, newHeight));
             }
             e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
             e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
 
             Pen black = new Pen(Color.Black);
             draw3dInlet(e.Graphics, stockPos.X, stockPos.Y, pieceSize, 4 * pieceSize, gameSize.Width > 800 ? 2 : 1);
@@ -627,23 +613,23 @@ namespace PieceDeal
             draw3dInlet(e.Graphics, scorePos.X, scorePos.Y, gameSize.Width / 3 + 10 * pieceSize / 3, pieceSize, gameSize.Width > 800 ? 2 : 1);
             float h = fontSizeFromHeight(e.Graphics, "Calibri", FontStyle.Regular, pieceSize);
             e.Graphics.DrawString("Score:", new Font("Calibri", h / 2, FontStyle.Regular), new SolidBrush(Color.Lime), scorePos.X, scorePos.Y + pieceSize / 2, new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Center });
-            e.Graphics.DrawString(score.ToString(), new Font("Calibri", h * 3 / 4, FontStyle.Bold), new SolidBrush(Color.White), scorePos.X + gameSize.Width / 3 + 10 * pieceSize / 3, scorePos.Y + pieceSize / 2, new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Center });
+            e.Graphics.DrawString(Program.Settings.Score.ToString(), new Font("Calibri", h * 3 / 4, FontStyle.Bold), new SolidBrush(Color.White), scorePos.X + gameSize.Width / 3 + 10 * pieceSize / 3, scorePos.Y + pieceSize / 2, new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Center });
 
             h = fontSizeFromHeight(e.Graphics, "Calibri", FontStyle.Regular, pieceSize / 3);
             e.Graphics.DrawString("Next joker at:", new Font("Calibri", h, FontStyle.Regular), new SolidBrush(Color.Lime), new Point(jokersPos.X + 4 * pieceSize, jokersPos.Y), new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Near });
             h = fontSizeFromHeight(e.Graphics, "Calibri", FontStyle.Regular, pieceSize * 2 / 3);
-            e.Graphics.DrawString(jokerTarget.ToString(), new Font("Calibri", h, FontStyle.Regular), new SolidBrush(Color.White), new Point(jokersPos.X + 4 * pieceSize, jokersPos.Y + pieceSize), new StringFormat { LineAlignment = StringAlignment.Far, Alignment = StringAlignment.Far });
+            e.Graphics.DrawString(Program.Settings.NextJokerAt.ToString(), new Font("Calibri", h, FontStyle.Regular), new SolidBrush(Color.White), new Point(jokersPos.X + 4 * pieceSize, jokersPos.Y + pieceSize), new StringFormat { LineAlignment = StringAlignment.Far, Alignment = StringAlignment.Far });
 
-            for (int i = 0; i < stock.Length; i++)
-                if (stock[i] != null)
-                    paintPieceAndOrJoker(e.Graphics, stockPos.X, stockPos.Y + pieceSize * i, pieceSize, stock[i], null);
+            for (int i = 0; i < Program.Settings.Stock.Length; i++)
+                if (Program.Settings.Stock[i] != null)
+                    paintPieceAndOrJoker(e.Graphics, stockPos.X, stockPos.Y + pieceSize * i, pieceSize, Program.Settings.Stock[i], null);
             for (int x = 0; x < 4; x++)
                 for (int y = 0; y < 4; y++)
-                    paintPieceAndOrJoker(e.Graphics, boardPos.X + pieceSize * x, boardPos.Y + pieceSize * y, pieceSize, board[y][x], jokersPlaced.FirstOrDefault(j => j.IndexX == x && j.IndexY == y));
+                    paintPieceAndOrJoker(e.Graphics, boardPos.X + pieceSize * x, boardPos.Y + pieceSize * y, pieceSize, Program.Settings.Board[y][x], Program.Settings.JokersOnBoard.FirstOrDefault(j => j.IndexX == x && j.IndexY == y));
 
-            if (jokersUnplaced[0] != null)
+            if (Program.Settings.UnusedJokers[0] != null)
                 e.Graphics.DrawImage(Resources.joker, new Rectangle(jokersPos.X, jokersPos.Y, pieceSize, pieceSize));
-            if (jokersUnplaced[1] != null)
+            if (Program.Settings.UnusedJokers[1] != null)
                 e.Graphics.DrawImage(Resources.joker, new Rectangle(jokersPos.X + pieceSize, jokersPos.Y, pieceSize, pieceSize));
         }
 
@@ -682,13 +668,13 @@ namespace PieceDeal
             if (piece != null)
             {
                 Image pieceImage = null;
-                int ind = piece.Col * 4 + piece.Number;
+                int ind = piece.Colour * 4 + piece.Shape;
                 if (!cache[size].ContainsKey(ind))
                 {
                     pieceImage = new Bitmap(size, size, PixelFormat.Format32bppArgb);
                     Graphics tmpg = Graphics.FromImage(pieceImage);
                     tmpg.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    tmpg.DrawImage(Res[piece.Col * 4 + piece.Number], size / 10, size / 10, size * 4 / 5, size * 4 / 5);
+                    tmpg.DrawImage(Res[piece.Colour * 4 + piece.Shape], size / 10, size / 10, size * 4 / 5, size * 4 / 5);
                     cache[size][ind] = pieceImage;
                 }
                 else
@@ -736,6 +722,15 @@ namespace PieceDeal
 
             if (lockedImage != null)
                 g.DrawImage(lockedImage, x, y);
+        }
+
+        private void startNewGame(object sender, EventArgs e)
+        {
+            if (Program.Settings.IsGameOver || DlgMessage.ShowQuestion("Are you sure you wish to surrender this game?", "&Yes", "&No") == 0)
+            {
+                Program.Settings.StartNewGame();
+                pnlMain.Refresh();
+            }
         }
     }
 }
