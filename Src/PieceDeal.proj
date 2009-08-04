@@ -1,0 +1,28 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+         DefaultTargets="SetVersion;Build"
+         ToolsVersion="3.5">
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+
+  <Target Name="SetVersion">
+    <Time Format="1MMdd">
+      <Output TaskParameter="FormattedTime" PropertyName="DefaultBuildId" />
+    </Time>
+    <PropertyGroup>
+       <BuildId Condition=" '$(BuildId)'=='' ">$(DefaultBuildId)</BuildId>
+       <ChangeId Condition=" '$(ChangeId)'=='' ">0</ChangeId>
+    </PropertyGroup>
+    <Exec Command="attrib -R Properties/AssemblyInfo.cs"/>
+    <FileUpdate Files="Properties/AssemblyInfo.cs"
+                Regex='(\[assembly: Assembly(File)?Version\("\d+\.\d+)[0-9.]+("\)\])'
+                ReplacementText="$1.$(BuildId).$(ChangeId)$3" />
+  </Target>
+
+  <Target Name="Build">
+    <PropertyGroup>
+       <Configuration Condition=" '$(Configuration)'=='' ">Release</Configuration>
+       <Platform Condition=" '$(Platform)'=='' ">Any CPU</Platform>
+    </PropertyGroup>
+    <MSBuild Projects="PieceDeal.sln" Targets="Rebuild" Properties="Configuration=$(Configuration);Platform=$(Platform)"/>
+  </Target>
+
+</Project>
