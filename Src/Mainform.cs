@@ -252,7 +252,7 @@ namespace PieceDeal
                     Program.Settings.Board[index / 4][index % 4] = null;
             Program.Settings.JokersOnBoard = Program.Settings.JokersOnBoard.Where(j => !sitesToClear.SelectMany(s => s).Any(s => j.IndexX == s % 4 && j.IndexY == s / 4)).ToArray();
 
-            if (Program.Settings.Score >= Program.Settings.NextJokerAt)
+            while (Program.Settings.Score >= Program.Settings.NextJokerAt)
             {
                 if (Program.Settings.UnusedJokers[0] == null)
                     Program.Settings.UnusedJokers[0] = new Joker();
@@ -519,7 +519,6 @@ namespace PieceDeal
                     else
                         highlight = new RectangleF(stockPos.X, stockPos.Y + pieceSize * dt.IndexX, pieceSize, pieceSize);
                     e.Graphics.FillPath(new SolidBrush(Color.FromArgb(32, 255, 255, 255)), GraphicsUtil.RoundedRectangle(highlight, (float) pieceSize / 5));
-                    // e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(32, 255, 255, 255)), highlight);
                 }
 
                 if (dragging is Joker)
@@ -726,7 +725,7 @@ namespace PieceDeal
 
         private void startNewGame(object sender, EventArgs e)
         {
-            if (Program.Settings.IsGameOver || DlgMessage.ShowQuestion("Are you sure you wish to surrender this game?", "&Yes", "&No") == 0)
+            if (Program.Settings.IsGameOver || DlgMessage.ShowQuestion("Are you sure you wish to concede this game?", "&Yes", "&No") == 0)
             {
                 Program.Settings.StartNewGame();
                 pnlMain.Refresh();
