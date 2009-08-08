@@ -51,6 +51,7 @@ namespace PieceDeal
         internal Joker[] UnusedJokers;
         internal Joker[] JokersOnBoard;
         internal int NextJokerAt;
+        internal int NextJokerAtPrev;
         internal int NextJokerAtStep;
         internal int Score;
 
@@ -64,6 +65,7 @@ namespace PieceDeal
             JokersOnBoard = new Joker[0];
             Score = 0;
             NextJokerAt = 250;
+            NextJokerAtPrev = 0;
             NextJokerAtStep = 250;
         }
 
@@ -81,7 +83,7 @@ namespace PieceDeal
                     return false;
                 if (JokersOnBoard == null || JokersOnBoard.Any(j => j == null || j.IndexX < 0 || j.IndexX > 3 || j.IndexY < 0 || j.IndexY > 3))
                     return false;
-                if (Score < 0 || NextJokerAt < Score)
+                if (Score < 0 || NextJokerAt <= Score || NextJokerAtPrev > Score || NextJokerAt % 250 != 0 || NextJokerAtPrev % 250 != 0)
                     return false;
                 if (NextJokerAtStep % 250 != 0 || NextJokerAtStep > 1500)
                     return false;
@@ -236,7 +238,10 @@ namespace PieceDeal
                         double gWhite = (double) pWhite[3 * intputX + 1] / 255;
                         double rWhite = (double) pWhite[3 * intputX + 2] / 255;
 
-                        double alpha = Math.Min(rBlack, Math.Min(gBlack, bBlack)) + 1 - Math.Max(rWhite, Math.Max(gWhite, bWhite));
+                        double lBlack = (Math.Max(rBlack, Math.Max(gBlack, bBlack)) + Math.Min(rBlack, Math.Min(gBlack, bBlack))) / 2;
+                        double lWhite = (Math.Max(rWhite, Math.Max(gWhite, bWhite)) + Math.Min(rWhite, Math.Min(gWhite, bWhite))) / 2;
+
+                        double alpha = lBlack + 1 - lWhite;
                         double red = rBlack / (rBlack + 1 - rWhite);
                         double green = gBlack / (gBlack + 1 - gWhite);
                         double blue = bBlack / (bBlack + 1 - bWhite);

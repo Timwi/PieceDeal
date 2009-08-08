@@ -262,6 +262,7 @@ namespace PieceDeal
                     Program.Settings.Score += 1000;
                 if (Program.Settings.NextJokerAtStep < 1500)
                     Program.Settings.NextJokerAtStep += 250;
+                Program.Settings.NextJokerAtPrev = Program.Settings.NextJokerAt;
                 Program.Settings.NextJokerAt += Program.Settings.NextJokerAtStep;
             }
 
@@ -608,16 +609,21 @@ namespace PieceDeal
             Pen black = new Pen(Color.Black);
             draw3dInlet(e.Graphics, stockPos.X, stockPos.Y, pieceSize, 4 * pieceSize, gameSize.Width > 800 ? 2 : 1);
             draw3dInlet(e.Graphics, boardPos.X, boardPos.Y, 4 * pieceSize, 4 * pieceSize, gameSize.Width > 800 ? 2 : 1);
-            draw3dInlet(e.Graphics, jokersPos.X, jokersPos.Y, 4 * pieceSize, pieceSize, gameSize.Width > 800 ? 2 : 1);
+            draw3dInlet(e.Graphics, jokersPos.X, jokersPos.Y, 2 * pieceSize, pieceSize, gameSize.Width > 800 ? 2 : 1);
+            draw3dInlet(e.Graphics, jokersPos.X + pieceSize * 5 / 2, jokersPos.Y, pieceSize * 3 / 2, pieceSize, gameSize.Width > 800 ? 2 : 1);
             draw3dInlet(e.Graphics, scorePos.X, scorePos.Y, gameSize.Width / 3 + 10 * pieceSize / 3, pieceSize, gameSize.Width > 800 ? 2 : 1);
+
             float h = fontSizeFromHeight(e.Graphics, "Calibri", FontStyle.Regular, pieceSize);
             e.Graphics.DrawString("Score:", new Font("Calibri", h / 2, FontStyle.Regular), new SolidBrush(Color.Lime), scorePos.X, scorePos.Y + pieceSize / 2, new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Center });
-            e.Graphics.DrawString(Program.Settings.Score.ToString(), new Font("Calibri", h * 3 / 4, FontStyle.Bold), new SolidBrush(Color.White), scorePos.X + gameSize.Width / 3 + 10 * pieceSize / 3, scorePos.Y + pieceSize / 2, new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Center });
+            e.Graphics.DrawString(Program.Settings.Score.ToString(), new Font("Calibri", h * 3 / 4, FontStyle.Bold), new SolidBrush(Color.FromArgb(255, 212, 0)), scorePos.X + gameSize.Width / 3 + 10 * pieceSize / 3, scorePos.Y + pieceSize / 2, new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Center });
 
             h = fontSizeFromHeight(e.Graphics, "Calibri", FontStyle.Regular, pieceSize / 3);
-            e.Graphics.DrawString("Next joker at:", new Font("Calibri", h, FontStyle.Regular), new SolidBrush(Color.Lime), new Point(jokersPos.X + 4 * pieceSize, jokersPos.Y), new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Near });
-            h = fontSizeFromHeight(e.Graphics, "Calibri", FontStyle.Regular, pieceSize * 2 / 3);
-            e.Graphics.DrawString(Program.Settings.NextJokerAt.ToString(), new Font("Calibri", h, FontStyle.Regular), new SolidBrush(Color.White), new Point(jokersPos.X + 4 * pieceSize, jokersPos.Y + pieceSize), new StringFormat { LineAlignment = StringAlignment.Far, Alignment = StringAlignment.Far });
+            e.Graphics.DrawString("Next joker at:", new Font("Calibri", h, FontStyle.Regular), new SolidBrush(Color.Lime), new Point(jokersPos.X + pieceSize * 13 / 4, jokersPos.Y), new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Near });
+            h = fontSizeFromHeight(e.Graphics, "Calibri", FontStyle.Regular, pieceSize * 7 / 12);
+            e.Graphics.DrawString(Program.Settings.NextJokerAt.ToString(), new Font("Calibri", h, FontStyle.Regular), new SolidBrush(Color.White), new Point(jokersPos.X + pieceSize * 13 / 4, jokersPos.Y + pieceSize * 23 / 40), new StringFormat { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center });
+            e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(128, 0, 64, 0)), jokersPos.X + pieceSize * 5 / 2, jokersPos.Y + pieceSize * 9 / 10, pieceSize * 3 / 2, pieceSize / 10);
+            if (Program.Settings.Score > Program.Settings.NextJokerAtPrev)
+                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(128, 0, 255, 64)), jokersPos.X + pieceSize * 5 / 2, jokersPos.Y + pieceSize * 9 / 10, (pieceSize * 3 / 2) * (Program.Settings.Score - Program.Settings.NextJokerAtPrev) / (Program.Settings.NextJokerAt - Program.Settings.NextJokerAtPrev), pieceSize / 10);
 
             for (int i = 0; i < Program.Settings.Stock.Length; i++)
                 if (Program.Settings.Stock[i] != null)
