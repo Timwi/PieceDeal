@@ -29,8 +29,6 @@ light_source { <-30, 10, -30> color White*.5 }
 light_source { <-10, 30, -30> color White*.5 }
 light_source { <-30, 30, -30> color White*.5 }
 
-#declare sph = .2;
-
 #declare sn = function(x) { sin(x*pi/180) }
 #declare cs = function(x) { cos(x*pi/180) }
 

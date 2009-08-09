@@ -27,7 +27,7 @@ namespace PieceDeal
         private Point stockPos;
         private Point boardPos;
         private Point jokersPos;
-        private Point scorePos;
+        private Rectangle scoreBox;
         private Rectangle dealButton;
 
         private DraggableObject dragging;
@@ -86,7 +86,7 @@ namespace PieceDeal
             stockPos = new Point(leftMargin + (gameSize.Width - 5 * pieceSize) / 3, topMargin + (gameSize.Height - 6 * pieceSize) / 2 + pieceSize);
             boardPos = new Point(leftMargin + (gameSize.Width - 5 * pieceSize) * 2 / 3 + pieceSize, topMargin + (gameSize.Height - 6 * pieceSize) / 2 + pieceSize);
             jokersPos = new Point(leftMargin + (gameSize.Width - 5 * pieceSize) * 2 / 3 + pieceSize, topMargin + (gameSize.Height - 6 * pieceSize) / 4);
-            scorePos = new Point(leftMargin + (gameSize.Width - 5 * pieceSize) / 3, topMargin + (gameSize.Height - 6 * pieceSize) * 3 / 4 + 5 * pieceSize);
+            scoreBox = new Rectangle(leftMargin + (gameSize.Width - 5 * pieceSize) / 3, topMargin + (gameSize.Height - 6 * pieceSize) * 3 / 4 + 5 * pieceSize, gameSize.Width / 3 + 10 * pieceSize / 3, pieceSize);
             dealButton = new Rectangle(leftMargin + (gameSize.Width - 5 * pieceSize) / 3, topMargin + (gameSize.Height - 6 * pieceSize) / 4, pieceSize, pieceSize);
         }
 
@@ -611,11 +611,11 @@ namespace PieceDeal
             draw3dInlet(e.Graphics, boardPos.X, boardPos.Y, 4 * pieceSize, 4 * pieceSize, gameSize.Width > 800 ? 2 : 1);
             draw3dInlet(e.Graphics, jokersPos.X, jokersPos.Y, 2 * pieceSize, pieceSize, gameSize.Width > 800 ? 2 : 1);
             draw3dInlet(e.Graphics, jokersPos.X + pieceSize * 5 / 2, jokersPos.Y, pieceSize * 3 / 2, pieceSize, gameSize.Width > 800 ? 2 : 1);
-            draw3dInlet(e.Graphics, scorePos.X, scorePos.Y, gameSize.Width / 3 + 10 * pieceSize / 3, pieceSize, gameSize.Width > 800 ? 2 : 1);
+            draw3dInlet(e.Graphics, scoreBox.X, scoreBox.Y, scoreBox.Width, scoreBox.Height, gameSize.Width > 800 ? 2 : 1);
 
             float h = fontSizeFromHeight(e.Graphics, "Calibri", FontStyle.Regular, pieceSize);
-            e.Graphics.DrawString("Score:", new Font("Calibri", h / 2, FontStyle.Regular), new SolidBrush(Color.Lime), scorePos.X, scorePos.Y + pieceSize / 2, new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Center });
-            e.Graphics.DrawString(Program.Settings.Score.ToString(), new Font("Calibri", h * 3 / 4, FontStyle.Bold), new SolidBrush(Color.FromArgb(255, 212, 0)), scorePos.X + gameSize.Width / 3 + 10 * pieceSize / 3, scorePos.Y + pieceSize / 2, new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Center });
+            e.Graphics.DrawString("Score:", new Font("Calibri", h / 2, FontStyle.Regular), new SolidBrush(Color.Lime), scoreBox.X, scoreBox.Y + pieceSize / 2, new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Center });
+            drawScore(e.Graphics, Program.Settings.Score);
 
             h = fontSizeFromHeight(e.Graphics, "Calibri", FontStyle.Regular, pieceSize / 3);
             e.Graphics.DrawString("Next joker at:", new Font("Calibri", h, FontStyle.Regular), new SolidBrush(Color.Lime), new Point(jokersPos.X + pieceSize * 13 / 4, jokersPos.Y), new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Near });
@@ -727,6 +727,37 @@ namespace PieceDeal
 
             if (lockedImage != null)
                 g.DrawImage(lockedImage, x, y);
+        }
+
+        private Dictionary<int, Dictionary<int, Image>> digitCache = new Dictionary<int, Dictionary<int, Image>>();
+        private DateTime lastScoreCacheFlush = DateTime.Now;
+        private Image[] DigitRes = new Image[] { Resources.d0, Resources.d1, Resources.d2, Resources.d3, Resources.d4, Resources.d5, Resources.d6, Resources.d7, Resources.d8, Resources.d9 };
+
+        private void drawScore(Graphics g, int sc)
+        {
+            if ((DateTime.Now - lastCacheFlush).TotalMinutes > 1)
+            {
+                cache = new Dictionary<int, Dictionary<int, Image>>();
+                lastCacheFlush = DateTime.Now;
+            }
+            string str = sc.ToString();
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (!digitCache.ContainsKey(str[i] - '0'))
+                    digitCache[str[i] - '0'] = new Dictionary<int, Image>();
+                Image img;
+                if (!digitCache[str[i] - '0'].ContainsKey(pieceSize))
+                {
+                    img = new Bitmap(pieceSize, pieceSize, PixelFormat.Format32bppArgb);
+                    Graphics tmpg = Graphics.FromImage(img);
+                    tmpg.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    tmpg.DrawImage(DigitRes[str[i] - '0'], 0, 0, pieceSize, pieceSize);
+                    digitCache[str[i] - '0'][pieceSize] = img;
+                }
+                else
+                    img = digitCache[str[i] - '0'][pieceSize];
+                g.DrawImage(img, scoreBox.Right - pieceSize * 11 / 12 - pieceSize * (str.Length - i - 1) * 7 / 12, scoreBox.Y);
+            }
         }
 
         private void startNewGame(object sender, EventArgs e)
