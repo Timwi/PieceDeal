@@ -90,54 +90,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\0.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\2.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\3.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\4.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\5.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\6.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\7.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\8.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\9.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\10.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\11.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\12.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\13.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\14.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\15.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\lock.png" />
   </ItemGroup>
   <ItemGroup>
@@ -215,7 +167,27 @@
     <None Include="Resources\d8.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="PieceDeal.proj" />
     <None Include="Resources\d9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fmodex.dll" />
+    <Content Include="Resources\circle-blue.png" />
+    <Content Include="Resources\circle-green.png" />
+    <Content Include="Resources\circle-red.png" />
+    <Content Include="Resources\circle-yellow.png" />
+    <Content Include="Resources\cone-blue.png" />
+    <Content Include="Resources\cone-green.png" />
+    <Content Include="Resources\cone-red.png" />
+    <Content Include="Resources\cone-yellow.png" />
+    <Content Include="Resources\cross-blue.png" />
+    <Content Include="Resources\cross-green.png" />
+    <Content Include="Resources\cross-red.png" />
+    <Content Include="Resources\cross-yellow.png" />
+    <Content Include="Resources\cube-blue.png" />
+    <Content Include="Resources\cube-green.png" />
+    <Content Include="Resources\cube-red.png" />
+    <Content Include="Resources\cube-yellow.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

@@ -16,7 +16,7 @@ global_settings {
 }
 
 #declare PDgreen = color rgbt<.05, 1, .2, 0.4>;
-#declare PDred = color rgbt<1, 0, 0, 0.4>;
+#declare PDred = color rgbt<1, 0, .1, 0.4>;
 #declare PDblue = color rgbt<.25, .5, 1, 0.4>;
 #declare PDyellow = color rgbt<1, 1, .15, 0.4>;
 

@@ -209,54 +209,5 @@ namespace PieceDeal
             T three = e.Current;
             return one.Equals(two) || one.Equals(three) || two.Equals(three);
         }
-
-        /// <summary>
-        /// Expects two 800x600 bitmaps which represent a graphic against a black and a white background.
-        /// Returns an approximation of the graphic with alpha transparency.
-        /// </summary>
-        internal static Bitmap createAlphaBitmap(Bitmap bmpBlack, Bitmap bmpWhite)
-        {
-            Bitmap output = new Bitmap(600, 600, PixelFormat.Format32bppArgb);
-            unsafe
-            {
-                var blackData = bmpBlack.LockBits(new Rectangle(0, 0, bmpBlack.Width, bmpBlack.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-                var whiteData = bmpWhite.LockBits(new Rectangle(0, 0, bmpWhite.Width, bmpWhite.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-                var outputData = output.LockBits(new Rectangle(0, 0, output.Width, output.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
-                for (int y = 0; y < 600; y++)
-                {
-                    byte* pBlack = (byte*) blackData.Scan0 + y * blackData.Stride;
-                    byte* pWhite = (byte*) whiteData.Scan0 + y * whiteData.Stride;
-                    byte* pOut = (byte*) outputData.Scan0 + y * outputData.Stride;
-                    for (int outputX = 0; outputX < 600; outputX++)
-                    {
-                        int intputX = outputX + 100;
-                        double bBlack = (double) pBlack[3 * intputX] / 255;
-                        double gBlack = (double) pBlack[3 * intputX + 1] / 255;
-                        double rBlack = (double) pBlack[3 * intputX + 2] / 255;
-
-                        double bWhite = (double) pWhite[3 * intputX] / 255;
-                        double gWhite = (double) pWhite[3 * intputX + 1] / 255;
-                        double rWhite = (double) pWhite[3 * intputX + 2] / 255;
-
-                        double lBlack = (Math.Max(rBlack, Math.Max(gBlack, bBlack)) + Math.Min(rBlack, Math.Min(gBlack, bBlack))) / 2;
-                        double lWhite = (Math.Max(rWhite, Math.Max(gWhite, bWhite)) + Math.Min(rWhite, Math.Min(gWhite, bWhite))) / 2;
-
-                        double alpha = lBlack + 1 - lWhite;
-                        double red = rBlack / (rBlack + 1 - rWhite);
-                        double green = gBlack / (gBlack + 1 - gWhite);
-                        double blue = bBlack / (bBlack + 1 - bWhite);
-
-                        pOut[4 * outputX] = (byte) (255 * blue);
-                        pOut[4 * outputX + 1] = (byte) (255 * green);
-                        pOut[4 * outputX + 2] = (byte) (255 * red);
-                        pOut[4 * outputX + 3] = (byte) (255 * alpha);
-                    }
-                }
-                bmpBlack.UnlockBits(blackData);
-                bmpWhite.UnlockBits(whiteData);
-                output.UnlockBits(outputData);
-            }
-            return output;
-        }
     }
 }

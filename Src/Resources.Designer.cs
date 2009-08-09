@@ -60,30 +60,114 @@ namespace PieceDeal {
             }
         }
         
-        internal static System.Drawing.Bitmap bluecone {
+        internal static System.Drawing.Bitmap circle_blue {
             get {
-                object obj = ResourceManager.GetObject("bluecone", resourceCulture);
+                object obj = ResourceManager.GetObject("circle_blue", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap bluecross {
+        internal static System.Drawing.Bitmap circle_green {
             get {
-                object obj = ResourceManager.GetObject("bluecross", resourceCulture);
+                object obj = ResourceManager.GetObject("circle_green", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap bluecube {
+        internal static System.Drawing.Bitmap circle_red {
             get {
-                object obj = ResourceManager.GetObject("bluecube", resourceCulture);
+                object obj = ResourceManager.GetObject("circle_red", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap bluesphere {
+        internal static System.Drawing.Bitmap circle_yellow {
             get {
-                object obj = ResourceManager.GetObject("bluesphere", resourceCulture);
+                object obj = ResourceManager.GetObject("circle_yellow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap cone_blue {
+            get {
+                object obj = ResourceManager.GetObject("cone_blue", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap cone_green {
+            get {
+                object obj = ResourceManager.GetObject("cone_green", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap cone_red {
+            get {
+                object obj = ResourceManager.GetObject("cone_red", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap cone_yellow {
+            get {
+                object obj = ResourceManager.GetObject("cone_yellow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap cross_blue {
+            get {
+                object obj = ResourceManager.GetObject("cross_blue", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap cross_green {
+            get {
+                object obj = ResourceManager.GetObject("cross_green", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap cross_red {
+            get {
+                object obj = ResourceManager.GetObject("cross_red", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap cross_yellow {
+            get {
+                object obj = ResourceManager.GetObject("cross_yellow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap cube_blue {
+            get {
+                object obj = ResourceManager.GetObject("cube_blue", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap cube_green {
+            get {
+                object obj = ResourceManager.GetObject("cube_green", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap cube_red {
+            get {
+                object obj = ResourceManager.GetObject("cube_red", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap cube_yellow {
+            get {
+                object obj = ResourceManager.GetObject("cube_yellow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -172,34 +256,6 @@ namespace PieceDeal {
             }
         }
         
-        internal static System.Drawing.Bitmap greencone {
-            get {
-                object obj = ResourceManager.GetObject("greencone", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap greencross {
-            get {
-                object obj = ResourceManager.GetObject("greencross", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap greencube {
-            get {
-                object obj = ResourceManager.GetObject("greencube", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap greensphere {
-            get {
-                object obj = ResourceManager.GetObject("greensphere", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
         internal static System.Drawing.Bitmap joker {
             get {
                 object obj = ResourceManager.GetObject("joker", resourceCulture);
@@ -210,34 +266,6 @@ namespace PieceDeal {
         internal static System.Drawing.Bitmap lockimage {
             get {
                 object obj = ResourceManager.GetObject("lockimage", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap redcone {
-            get {
-                object obj = ResourceManager.GetObject("redcone", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap redcross {
-            get {
-                object obj = ResourceManager.GetObject("redcross", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap redcube {
-            get {
-                object obj = ResourceManager.GetObject("redcube", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap redsphere {
-            get {
-                object obj = ResourceManager.GetObject("redsphere", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -253,34 +281,6 @@ namespace PieceDeal {
             get {
                 object obj = ResourceManager.GetObject("sound_up", resourceCulture);
                 return ((byte[])(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap yellowcone {
-            get {
-                object obj = ResourceManager.GetObject("yellowcone", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap yellowcross {
-            get {
-                object obj = ResourceManager.GetObject("yellowcross", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap yellowcube {
-            get {
-                object obj = ResourceManager.GetObject("yellowcube", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap yellowsphere {
-            get {
-                object obj = ResourceManager.GetObject("yellowsphere", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

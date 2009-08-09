@@ -651,17 +651,18 @@ namespace PieceDeal
         private DateTime lastCacheFlush = DateTime.Now;
         private Image[] Res = new Image[]
         {
-            Resources.redcube, Resources.redsphere, Resources.redcone, Resources.redcross,
-            Resources.greencube, Resources.greensphere, Resources.greencone, Resources.greencross,
-            Resources.bluecube, Resources.bluesphere, Resources.bluecone, Resources.bluecross,
-            Resources.yellowcube, Resources.yellowsphere, Resources.yellowcone, Resources.yellowcross
+            Resources.cube_red, Resources.circle_red, Resources.cone_red, Resources.cross_red,
+            Resources.cube_green, Resources.circle_green, Resources.cone_green, Resources.cross_green,
+            Resources.cube_blue, Resources.circle_blue, Resources.cone_blue, Resources.cross_blue,
+            Resources.cube_yellow, Resources.circle_yellow, Resources.cone_yellow, Resources.cross_yellow
         };
 
         private void paintPieceAndOrJoker(Graphics g, int x, int y, int size, Piece piece, Joker joker)
         {
             if ((DateTime.Now - lastCacheFlush).TotalMinutes > 1)
             {
-                cache = new Dictionary<int, Dictionary<int, Image>>();
+                if (cache.Sum(kvp => kvp.Value.Count) > 256)
+                    cache.Clear();
                 lastCacheFlush = DateTime.Now;
             }
             if (!cache.ContainsKey(size))
@@ -730,15 +731,16 @@ namespace PieceDeal
         }
 
         private Dictionary<int, Dictionary<int, Image>> digitCache = new Dictionary<int, Dictionary<int, Image>>();
-        private DateTime lastScoreCacheFlush = DateTime.Now;
+        private DateTime lastDigitCacheFlush = DateTime.Now;
         private Image[] DigitRes = new Image[] { Resources.d0, Resources.d1, Resources.d2, Resources.d3, Resources.d4, Resources.d5, Resources.d6, Resources.d7, Resources.d8, Resources.d9 };
 
         private void drawScore(Graphics g, int sc)
         {
-            if ((DateTime.Now - lastCacheFlush).TotalMinutes > 1)
+            if ((DateTime.Now - lastDigitCacheFlush).TotalMinutes > 1)
             {
-                cache = new Dictionary<int, Dictionary<int, Image>>();
-                lastCacheFlush = DateTime.Now;
+                if (digitCache.Sum(kvp => kvp.Value.Count) > 256)
+                    digitCache.Clear();
+                lastDigitCacheFlush = DateTime.Now;
             }
             string str = sc.ToString();
             for (int i = 0; i < str.Length; i++)
