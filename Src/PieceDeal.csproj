@@ -21,7 +21,6 @@
     <OutputPath>..\Builds\$(Configuration)</OutputPath>
     <BaseIntermediateOutputPath>..\Builds\$(Configuration)\obj-$(AssemblyName)</BaseIntermediateOutputPath>
     <IntermediateOutputPath>..\Builds\$(Configuration)\obj-$(AssemblyName)</IntermediateOutputPath>
-    <DocumentationFile>..\Builds\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -34,7 +33,6 @@
     <OutputPath>..\Builds\$(Configuration)</OutputPath>
     <BaseIntermediateOutputPath>..\Builds\$(Configuration)\obj-$(AssemblyName)</BaseIntermediateOutputPath>
     <IntermediateOutputPath>..\Builds\$(Configuration)\obj-$(AssemblyName)</IntermediateOutputPath>
-    <DocumentationFile>..\Builds\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
     <DefineConstants>TRACE</DefineConstants>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>

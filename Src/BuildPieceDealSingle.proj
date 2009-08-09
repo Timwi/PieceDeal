@@ -1,0 +1,44 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+         DefaultTargets="Prepare;Build;Merge;Installer"
+         ToolsVersion="3.5">
+  <Import Project="..\common\Build\CommonImports.proj"/>
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)'==''">Release</Configuration>
+    <Platform Condition="'$(Platform)'==''">x86</Platform>
+    <OutputBase>..\..\builds\PieceDeal</OutputBase>
+  </PropertyGroup>
+
+
+  <Target Name="Prepare">
+    <ConvertToAbsolutePath Paths="$(OutputBase)"><Output TaskParameter="AbsolutePaths" PropertyName="OutputBase"/></ConvertToAbsolutePath>
+    <PropertyGroup>
+      <OutputPath>$(OutputBase)\$(Configuration)-$(Platform)</OutputPath>
+      <OutputPathTemp>$(OutputBase)-Temp\$(Configuration)-$(Platform)</OutputPathTemp>
+    </PropertyGroup>
+    <Message Text='OutputPath is "$(OutputPath)".'/>
+  </Target>
+
+
+  <Target Name="Build" DependsOnTargets="Prepare">
+    <MSBuild Projects="PieceDeal.sln" Targets="Rebuild"
+             Properties="Configuration=$(Configuration);Platform=$(Platform);OutputPath=$(OutputPath)\Raw\;IntermediateOutputPath=$(OutputPathTemp)\Raw\;BaseIntermediateOutputPath=$(OutputPathTemp)\Raw\"/>
+  </Target>
+
+
+  <Target Name="Merge" DependsOnTargets="Build">
+    <ItemGroup>
+      <UnmergedFiles Include="$(OutputPath)\Raw\**"
+                     Exclude="$(OutputPath)\Raw\PieceDeal.*; $(OutputPath)\Raw\RT.Util.*"/>
+    </ItemGroup>
+    <Copy SourceFiles="@(UnmergedFiles)" DestinationFolder="$(OutputPath)\Merged\%(RecursiveDir)"/>
+    <MakeDir Directories="$(OutputPath)\Merged"/>
+    <Exec Command='"$(ILMerge)" "/out:$(OutputPath)\Merged\PieceDeal.exe" "$(OutputPath)\Raw\PieceDeal.exe" "$(OutputPath)\Raw\RT.Util.dll"'/>
+  </Target>
+
+
+  <Target Name="Installer" DependsOnTargets="Merge">
+    <Warning Text="The Installer task is not yet implemented."/>
+  </Target>
+
+
+</Project>

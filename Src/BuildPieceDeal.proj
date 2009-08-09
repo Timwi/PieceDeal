@@ -1,0 +1,12 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+         DefaultTargets="Build" ToolsVersion="3.5">
+  <Import Project="..\common\Build\CommonImports.proj"/>
+
+  <Target Name="Build">
+    <ConvertToAbsolutePath Paths="Properties\AssemblyInfo.cs"><Output TaskParameter="AbsolutePaths" PropertyName="AssemblyInfoFile"/></ConvertToAbsolutePath>
+    <MSBuild Projects="..\common\Build\SetAssemblyVersion.proj" Properties="AssemblyInfoFile=$(AssemblyInfoFile)"/>
+    <MSBuild Projects="BuildPieceDealSingle.proj" Properties="Configuration=Release"/>
+    <MSBuild Projects="BuildPieceDealSingle.proj" Properties="Configuration=Debug"/>
+  </Target>
+
+</Project>

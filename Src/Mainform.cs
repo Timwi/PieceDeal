@@ -34,7 +34,6 @@ namespace PieceDeal
         private Slot draggingFrom;
         private int draggingX;
         private int draggingY;
-        private Rectangle? dragHighlight;
         private bool pressingDeal = false;
         private bool mouseOnDeal = false;
 
