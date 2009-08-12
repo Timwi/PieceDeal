@@ -20,6 +20,10 @@ namespace PieceDeal
 {
     public partial class Mainform : ManagedForm
     {
+        private static SmoothingMode GlobalSmoothingMode = SmoothingMode.HighQuality;
+        private static TextRenderingHint GlobalTextRenderingHint = TextRenderingHint.AntiAlias;
+        private static InterpolationMode GlobalInterpolationMode = InterpolationMode.HighQualityBicubic;
+
         private int leftMargin;
         private int topMargin;
         private Size gameSize;
@@ -135,25 +139,25 @@ namespace PieceDeal
                 if (numJokers == 0)
                 {
                     var pieces = site.Select(s => Program.Settings.Board[s / 4][s % 4]);
-                    var numbers = pieces.Select(d => d.Shape);
+                    var shapes = pieces.Select(d => d.Shape);
                     var colors = pieces.Select(d => d.Colour);
 
-                    if (numbers.Distinct().Count() == 1 && colors.Distinct().Count() == 1) // all the same
+                    if (shapes.Distinct().Count() == 1 && colors.Distinct().Count() == 1) // all the same
                     {
                         pointsGained = 400;
                         sitesToClear.Add(site);
                     }
-                    else if (numbers.Distinct().Count() == 4 && colors.Distinct().Count() == 1) // same color, all numbers
+                    else if (shapes.Distinct().Count() == 4 && colors.Distinct().Count() == 1) // same color, all shapes
                     {
                         pointsGained = 200;
                         sitesToClear.Add(site);
                     }
-                    else if (numbers.Distinct().Count() == 1 && colors.Distinct().Count() == 4) // same number, all colors
+                    else if (shapes.Distinct().Count() == 1 && colors.Distinct().Count() == 4) // same shape, all colors
                     {
                         pointsGained = 200;
                         sitesToClear.Add(site);
                     }
-                    else if (numbers.Distinct().Count() == 4 && colors.Distinct().Count() == 4) // all numbers, all colors
+                    else if (shapes.Distinct().Count() == 4 && colors.Distinct().Count() == 4) // all shapes, all colors
                     {
                         pointsGained = 100;
                         sitesToClear.Add(site);
@@ -162,41 +166,41 @@ namespace PieceDeal
                         pointsGained = 60;
                     else if (colors.Distinct().Count() == 1) // same color
                         pointsGained = 40;
-                    else if (numbers.Distinct().Count() == 1) // same number
+                    else if (shapes.Distinct().Count() == 1) // same shape
                         pointsGained = 40;
-                    else if (colors.TwoPairs() && numbers.TwoPairs()) // pair color, pair number
+                    else if (colors.TwoPairs() && shapes.TwoPairs()) // pair color, pair shape
                         pointsGained = 20;
                     else if (colors.Distinct().Count() == 4) // each color
                         pointsGained = 10;
-                    else if (numbers.Distinct().Count() == 4) // each number
+                    else if (shapes.Distinct().Count() == 4) // each shape
                         pointsGained = 10;
                     else if (colors.TwoPairs()) // pair color
                         pointsGained = 5;
-                    else if (numbers.TwoPairs()) // pair number
+                    else if (shapes.TwoPairs()) // pair shape
                         pointsGained = 5;
                 }
                 else if (numJokers == 1)
                 {
                     var pieces = site.Where(s => !Program.Settings.JokersOnBoard.Any(j => j.IndexX == s % 4 && j.IndexY == s / 4)).Select(s => Program.Settings.Board[s / 4][s % 4]);
-                    var numbers = pieces.Select(d => d.Shape);
+                    var shapes = pieces.Select(d => d.Shape);
                     var colors = pieces.Select(d => d.Colour);
 
-                    if (numbers.Distinct().Count() == 1 && colors.Distinct().Count() == 1) // all the same
+                    if (shapes.Distinct().Count() == 1 && colors.Distinct().Count() == 1) // all the same
                     {
                         pointsGained = 400;
                         sitesToClear.Add(site);
                     }
-                    else if (numbers.Distinct().Count() == 3 && colors.Distinct().Count() == 1) // same color, all numbers
+                    else if (shapes.Distinct().Count() == 3 && colors.Distinct().Count() == 1) // same color, all shapes
                     {
                         pointsGained = 200;
                         sitesToClear.Add(site);
                     }
-                    else if (numbers.Distinct().Count() == 1 && colors.Distinct().Count() == 3) // same number, all colors
+                    else if (shapes.Distinct().Count() == 1 && colors.Distinct().Count() == 3) // same shape, all colors
                     {
                         pointsGained = 200;
                         sitesToClear.Add(site);
                     }
-                    else if (numbers.Distinct().Count() == 3 && colors.Distinct().Count() == 3) // all numbers, all colors
+                    else if (shapes.Distinct().Count() == 3 && colors.Distinct().Count() == 3) // all shapes, all colors
                     {
                         pointsGained = 100;
                         sitesToClear.Add(site);
@@ -205,13 +209,13 @@ namespace PieceDeal
                         pointsGained = 60;
                     else if (colors.Distinct().Count() == 1) // same color
                         pointsGained = 40;
-                    else if (numbers.Distinct().Count() == 1) // same number
+                    else if (shapes.Distinct().Count() == 1) // same shape
                         pointsGained = 40;
-                    else if (colors.OnePair() && numbers.OnePair()) // pair color, pair number
+                    else if (colors.OnePair() && shapes.OnePair()) // pair color, pair shape
                         pointsGained = 20;
                     else if (colors.Distinct().Count() == 3) // each color
                         pointsGained = 10;
-                    else if (numbers.Distinct().Count() == 3) // each number
+                    else if (shapes.Distinct().Count() == 3) // each shape
                         pointsGained = 10;
 
                     pointsGained = pointsGained * 3 / 4;
@@ -221,16 +225,16 @@ namespace PieceDeal
                     if (numJokers == 2)
                     {
                         var pieces = site.Where(s => !Program.Settings.JokersOnBoard.Any(j => j.IndexX == s % 4 && j.IndexY == s / 4)).Select(s => Program.Settings.Board[s / 4][s % 4]).ToArray();
-                        var numbers = new[] { pieces[0].Shape, pieces[1].Shape };
+                        var shapes = new[] { pieces[0].Shape, pieces[1].Shape };
                         var colors = new[] { pieces[0].Colour, pieces[1].Colour };
 
-                        if (numbers[0] == numbers[1] && colors[0] == colors[1]) // all the same
+                        if (shapes[0] == shapes[1] && colors[0] == colors[1]) // all the same
                             pointsGained = 200;
-                        else if (colors[0] == colors[1]) // same color, all numbers
+                        else if (colors[0] == colors[1]) // same color, all shapes
                             pointsGained = 100;
-                        else if (numbers[0] == numbers[1]) // same number, all colors
+                        else if (shapes[0] == shapes[1]) // same shape, all colors
                             pointsGained = 100;
-                        else // all numbers, all colors
+                        else // all shapes, all colors
                             pointsGained = 50;
                     }
                     else if (numJokers == 3)
@@ -338,7 +342,7 @@ namespace PieceDeal
             {
                 FMOD.Channel ch = null;
                 Program.FModSystem.playSound(FMOD.CHANNELINDEX.FREE, sndPickUp, false, ref ch);
-                pnlMain.Refresh();
+                pnlMain.Invalidate();
             }
 
             if (e.X >= dealButton.Left && e.X <= dealButton.Right && e.Y >= dealButton.Top && e.Y <= dealButton.Bottom)
@@ -453,7 +457,7 @@ namespace PieceDeal
 
             draggingFrom = null;
             dragging = null;
-            pnlMain.Refresh();
+            pnlMain.Invalidate();
         }
 
         private float fontSizeFromHeight(Graphics g, string fontName, FontStyle style, float targetHeight)
@@ -502,10 +506,44 @@ namespace PieceDeal
 
         private void paint(object sender, PaintEventArgs e)
         {
-            e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
+            e.Graphics.InterpolationMode = GlobalInterpolationMode;
+            e.Graphics.SmoothingMode = GlobalSmoothingMode;
+            e.Graphics.TextRenderingHint = GlobalTextRenderingHint;
 
+            drawScore(e.Graphics, Program.Settings.Score);
+
+            // Draw "next joker at" score and progress bar
+            var h = fontSizeFromHeight(e.Graphics, "Calibri", FontStyle.Regular, pieceSize * 7 / 12);
+            e.Graphics.DrawString(Program.Settings.NextJokerAt.ToString(), new Font("Calibri", h, FontStyle.Regular), new SolidBrush(Color.White), new Point(jokersPos.X + pieceSize * 13 / 4, jokersPos.Y + pieceSize * 23 / 40), new StringFormat { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center });
+            e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(128, 0, 64, 0)), jokersPos.X + pieceSize * 5 / 2, jokersPos.Y + pieceSize * 9 / 10, pieceSize * 3 / 2, pieceSize / 10);
+            if (Program.Settings.Score > Program.Settings.NextJokerAtPrev)
+                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(128, 0, 255, 64)), jokersPos.X + pieceSize * 5 / 2, jokersPos.Y + pieceSize * 9 / 10, (pieceSize * 3 / 2) * (Program.Settings.Score - Program.Settings.NextJokerAtPrev) / (Program.Settings.NextJokerAt - Program.Settings.NextJokerAtPrev), pieceSize / 10);
+
+            // Pieces in the stock
+            for (int i = 0; i < Program.Settings.Stock.Length; i++)
+                if (Program.Settings.Stock[i] != null)
+                    paintPieceAndOrJoker(e.Graphics, stockPos.X, stockPos.Y + pieceSize * i, pieceSize, Program.Settings.Stock[i], null);
+
+            // Unused jokers
+            if (Program.Settings.UnusedJokers[0] != null)
+                e.Graphics.DrawImage(Resources.joker, new Rectangle(jokersPos.X, jokersPos.Y, pieceSize, pieceSize));
+            if (Program.Settings.UnusedJokers[1] != null)
+                e.Graphics.DrawImage(Resources.joker, new Rectangle(jokersPos.X + pieceSize, jokersPos.Y, pieceSize, pieceSize));
+
+            // Draw pieces and jokers on the board only if they are NOT locked (paintBuffer() already draws the ones that are locked)
+            for (int x = 0; x < 4; x++)
+            {
+                for (int y = 0; y < 4; y++)
+                {
+                    var pieceOnBoard = Program.Settings.Board[y][x];
+                    if (pieceOnBoard != null && pieceOnBoard.Locked)
+                        pieceOnBoard = null;
+                    var joker = Program.Settings.JokersOnBoard.FirstOrDefault(j => j.IndexX == x && j.IndexY == y && !j.Locked);
+                    paintPieceAndOrJoker(e.Graphics, boardPos.X + pieceSize * x, boardPos.Y + pieceSize * y, pieceSize, pieceOnBoard, joker);
+                }
+            }
+
+            // Draw piece or joker that is being dragged
             if (draggingFrom != null)
             {
                 var dt = dragTarget(draggingX, draggingY);
@@ -533,11 +571,14 @@ namespace PieceDeal
                     GraphicsUtil.DrawImageAlpha(e.Graphics, bmp, new Rectangle(draggingX - pieceSize * 13 / 20, draggingY - pieceSize * 13 / 20, pieceSize * 13 / 10, pieceSize * 13 / 10), 0.75f);
                 }
             }
+
+            // Draw the "Deal" button
             if (pressingDeal && mouseOnDeal)
                 e.Graphics.DrawImage(Resources.dealpressed, dealButton);
             else
                 e.Graphics.DrawImage(Resources.deal, dealButton);
 
+            // Draw the "Game over" message
             if (Program.Settings.IsGameOver && dragging == null)
             {
                 GraphicsPath inside = new GraphicsPath();
@@ -554,40 +595,11 @@ namespace PieceDeal
         private void paintBuffer(object sender, PaintEventArgs e)
         {
             if (background == null)
-            {
-                Bitmap watermark = new Bitmap(2048, 1536, PixelFormat.Format24bppRgb);
-                Graphics w = Graphics.FromImage(watermark);
-                w.Clear(Color.Black);
-                w.TranslateTransform(1024, 768);
-                w.RotateTransform(-30);
-                w.TranslateTransform(-1024, -768);
-                w.DrawString("PIECE", new Font("Berlin Sans FB", fontSizeFromHeight(w, "Berlin Sans FB", FontStyle.Bold, 640), FontStyle.Bold), new SolidBrush(Color.White), new PointF(1024, 768 + 96), new StringFormat { LineAlignment = StringAlignment.Far, Alignment = StringAlignment.Center });
-                w.DrawString("DEAL", new Font("Berlin Sans FB Demi", fontSizeFromHeight(w, "Berlin Sans FB Demi", FontStyle.Bold, 640), FontStyle.Bold), new SolidBrush(Color.White), new PointF(1024, 768 - 96), new StringFormat { LineAlignment = StringAlignment.Near, Alignment = StringAlignment.Center });
+                generateBackground();
 
-                unsafe
-                {
-                    var d = watermark.LockBits(new Rectangle(0, 0, 2048, 1536), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-                    background = new Bitmap(2048, 1536, PixelFormat.Format24bppRgb);
-                    Graphics g = Graphics.FromImage(background);
-                    g.Clear(Color.FromArgb(134, 88, 43));
-                    g.SmoothingMode = SmoothingMode.HighQuality;
-
-                    for (int y = 1530; y >= 0; y -= 10)
-                    {
-                        byte* b = (byte*) d.Scan0 + y * d.Stride;
-                        for (int x = 4; x < 2048; x += 15)
-                        {
-                            bool darker = (b[3 * x] > 0);
-                            g.TranslateTransform(x, y);
-                            g.RotateTransform((float) (Ut.Rnd.NextDouble() * 40 - 20));
-                            var i = Ut.Rnd.Next(0, 24);
-                            g.FillEllipse(new SolidBrush(Color.FromArgb((darker ? 120 : 134) + i, (darker ? 78 : 88) + i / 2, (darker ? 37 : 43) + i / 3)), -20, -30, 20, 30);
-                            g.ResetTransform();
-                        }
-                    }
-                    watermark.UnlockBits(d);
-                }
-            }
+            e.Graphics.SmoothingMode = GlobalSmoothingMode;
+            e.Graphics.InterpolationMode = GlobalInterpolationMode;
+            e.Graphics.TextRenderingHint = GlobalTextRenderingHint;
 
             if (pnlMain.ClientSize.Width > background.Width * pnlMain.ClientSize.Height / background.Height)
             {
@@ -601,11 +613,7 @@ namespace PieceDeal
                 int newWidth = newHeight * background.Width / background.Height;
                 e.Graphics.DrawImage(background, new Rectangle((pnlMain.ClientSize.Width - newWidth) / 2, 0, newWidth, newHeight));
             }
-            e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-            e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
 
-            Pen black = new Pen(Color.Black);
             draw3dInlet(e.Graphics, stockPos.X, stockPos.Y, pieceSize, 4 * pieceSize, gameSize.Width > 800 ? 2 : 1);
             draw3dInlet(e.Graphics, boardPos.X, boardPos.Y, 4 * pieceSize, 4 * pieceSize, gameSize.Width > 800 ? 2 : 1);
             draw3dInlet(e.Graphics, jokersPos.X, jokersPos.Y, 2 * pieceSize, pieceSize, gameSize.Width > 800 ? 2 : 1);
@@ -614,27 +622,58 @@ namespace PieceDeal
 
             float h = fontSizeFromHeight(e.Graphics, "Calibri", FontStyle.Regular, pieceSize);
             e.Graphics.DrawString("Score:", new Font("Calibri", h / 2, FontStyle.Regular), new SolidBrush(Color.Lime), scoreBox.X, scoreBox.Y + pieceSize / 2, new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Center });
-            drawScore(e.Graphics, Program.Settings.Score);
 
             h = fontSizeFromHeight(e.Graphics, "Calibri", FontStyle.Regular, pieceSize / 3);
             e.Graphics.DrawString("Next joker at:", new Font("Calibri", h, FontStyle.Regular), new SolidBrush(Color.Lime), new Point(jokersPos.X + pieceSize * 13 / 4, jokersPos.Y), new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Near });
-            h = fontSizeFromHeight(e.Graphics, "Calibri", FontStyle.Regular, pieceSize * 7 / 12);
-            e.Graphics.DrawString(Program.Settings.NextJokerAt.ToString(), new Font("Calibri", h, FontStyle.Regular), new SolidBrush(Color.White), new Point(jokersPos.X + pieceSize * 13 / 4, jokersPos.Y + pieceSize * 23 / 40), new StringFormat { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center });
-            e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(128, 0, 64, 0)), jokersPos.X + pieceSize * 5 / 2, jokersPos.Y + pieceSize * 9 / 10, pieceSize * 3 / 2, pieceSize / 10);
-            if (Program.Settings.Score > Program.Settings.NextJokerAtPrev)
-                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(128, 0, 255, 64)), jokersPos.X + pieceSize * 5 / 2, jokersPos.Y + pieceSize * 9 / 10, (pieceSize * 3 / 2) * (Program.Settings.Score - Program.Settings.NextJokerAtPrev) / (Program.Settings.NextJokerAt - Program.Settings.NextJokerAtPrev), pieceSize / 10);
 
-            for (int i = 0; i < Program.Settings.Stock.Length; i++)
-                if (Program.Settings.Stock[i] != null)
-                    paintPieceAndOrJoker(e.Graphics, stockPos.X, stockPos.Y + pieceSize * i, pieceSize, Program.Settings.Stock[i], null);
+            // Draw pieces and jokers on the board only if they are locked (paint() will draw the ones that are NOT locked)
             for (int x = 0; x < 4; x++)
+            {
                 for (int y = 0; y < 4; y++)
-                    paintPieceAndOrJoker(e.Graphics, boardPos.X + pieceSize * x, boardPos.Y + pieceSize * y, pieceSize, Program.Settings.Board[y][x], Program.Settings.JokersOnBoard.FirstOrDefault(j => j.IndexX == x && j.IndexY == y));
+                {
+                    var pieceOnBoard = Program.Settings.Board[y][x];
+                    if (pieceOnBoard != null && !pieceOnBoard.Locked)
+                        pieceOnBoard = null;
+                    var joker = Program.Settings.JokersOnBoard.FirstOrDefault(j => j.IndexX == x && j.IndexY == y && j.Locked);
+                    paintPieceAndOrJoker(e.Graphics, boardPos.X + pieceSize * x, boardPos.Y + pieceSize * y, pieceSize, pieceOnBoard, joker);
+                }
+            }
+        }
 
-            if (Program.Settings.UnusedJokers[0] != null)
-                e.Graphics.DrawImage(Resources.joker, new Rectangle(jokersPos.X, jokersPos.Y, pieceSize, pieceSize));
-            if (Program.Settings.UnusedJokers[1] != null)
-                e.Graphics.DrawImage(Resources.joker, new Rectangle(jokersPos.X + pieceSize, jokersPos.Y, pieceSize, pieceSize));
+        private void generateBackground()
+        {
+            Bitmap watermark = new Bitmap(2048, 1536, PixelFormat.Format24bppRgb);
+            Graphics w = Graphics.FromImage(watermark);
+            w.Clear(Color.Black);
+            w.TranslateTransform(1024, 768);
+            w.RotateTransform(-30);
+            w.TranslateTransform(-1024, -768);
+            w.DrawString("PIECE", new Font("Berlin Sans FB", fontSizeFromHeight(w, "Berlin Sans FB", FontStyle.Bold, 640), FontStyle.Bold), new SolidBrush(Color.White), new PointF(1024, 768 + 96), new StringFormat { LineAlignment = StringAlignment.Far, Alignment = StringAlignment.Center });
+            w.DrawString("DEAL", new Font("Berlin Sans FB Demi", fontSizeFromHeight(w, "Berlin Sans FB Demi", FontStyle.Bold, 640), FontStyle.Bold), new SolidBrush(Color.White), new PointF(1024, 768 - 96), new StringFormat { LineAlignment = StringAlignment.Near, Alignment = StringAlignment.Center });
+
+            unsafe
+            {
+                var d = watermark.LockBits(new Rectangle(0, 0, 2048, 1536), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+                background = new Bitmap(2048, 1536, PixelFormat.Format24bppRgb);
+                Graphics g = Graphics.FromImage(background);
+                g.Clear(Color.FromArgb(134, 88, 43));
+                g.SmoothingMode = GlobalSmoothingMode;
+
+                for (int y = 1530; y >= 0; y -= 10)
+                {
+                    byte* b = (byte*) d.Scan0 + y * d.Stride;
+                    for (int x = 4; x <= 2059; x += 15)
+                    {
+                        bool darker = (b[3 * x] > 0);
+                        g.TranslateTransform(x, y);
+                        g.RotateTransform((float) (Ut.Rnd.NextDouble() * 40 - 20));
+                        var i = Ut.Rnd.Next(0, 24);
+                        g.FillEllipse(new SolidBrush(Color.FromArgb((darker ? 120 : 134) + i, (darker ? 78 : 88) + i / 2, (darker ? 37 : 43) + i / 3)), -20, -30, 20, 30);
+                        g.ResetTransform();
+                    }
+                }
+                watermark.UnlockBits(d);
+            }
         }
 
         private void draw3dInlet(Graphics g, int x, int y, int w, int h, int th)
@@ -658,27 +697,31 @@ namespace PieceDeal
 
         private void paintPieceAndOrJoker(Graphics g, int x, int y, int size, Piece piece, Joker joker)
         {
+            if (piece == null && joker == null)
+                return;
+
             if ((DateTime.Now - lastCacheFlush).TotalMinutes > 1)
             {
                 if (cache.Sum(kvp => kvp.Value.Count) > 256)
                     cache.Clear();
                 lastCacheFlush = DateTime.Now;
             }
+
             if (!cache.ContainsKey(size))
-                cache[size] = new Dictionary<int, Image>();
+                cache[size] = new Dictionary<int, Image>(64);
 
             Image jokerImage = null;
             Image lockedImage = null;
 
             if (piece != null)
             {
-                Image pieceImage = null;
+                Image pieceImage;
                 int ind = piece.Colour * 4 + piece.Shape;
                 if (!cache[size].ContainsKey(ind))
                 {
                     pieceImage = new Bitmap(size, size, PixelFormat.Format32bppArgb);
                     Graphics tmpg = Graphics.FromImage(pieceImage);
-                    tmpg.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    tmpg.InterpolationMode = GlobalInterpolationMode;
                     tmpg.DrawImage(Res[piece.Colour * 4 + piece.Shape], size / 10, size / 10, size * 4 / 5, size * 4 / 5);
                     cache[size][ind] = pieceImage;
                 }
@@ -694,7 +737,7 @@ namespace PieceDeal
                 {
                     jokerImage = new Bitmap(size, size, PixelFormat.Format32bppArgb);
                     Graphics tmpg = Graphics.FromImage(jokerImage);
-                    tmpg.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    tmpg.InterpolationMode = GlobalInterpolationMode;
                     tmpg.DrawImage(Resources.joker, 0, 0, size, size);
                     cache[size][-2] = jokerImage;
                 }
@@ -708,7 +751,7 @@ namespace PieceDeal
                 {
                     lockedImage = new Bitmap(size, size, PixelFormat.Format32bppArgb);
                     Graphics tmpg = Graphics.FromImage(lockedImage);
-                    tmpg.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    tmpg.InterpolationMode = GlobalInterpolationMode;
                     tmpg.DrawImage(Resources.lockimage, 0, 0, size, size);
                     cache[size][-1] = lockedImage;
                 }
@@ -751,7 +794,7 @@ namespace PieceDeal
                 {
                     img = new Bitmap(pieceSize, pieceSize, PixelFormat.Format32bppArgb);
                     Graphics tmpg = Graphics.FromImage(img);
-                    tmpg.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    tmpg.InterpolationMode = GlobalInterpolationMode;
                     tmpg.DrawImage(DigitRes[str[i] - '0'], 0, 0, pieceSize, pieceSize);
                     digitCache[str[i] - '0'][pieceSize] = img;
                 }
