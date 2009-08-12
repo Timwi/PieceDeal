@@ -165,11 +165,12 @@
     <None Include="Resources\d8.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="PieceDeal.proj" />
+    <None Include="BuildPieceDeal.proj" />
+    <None Include="BuildPieceDealSingle.proj" />
     <None Include="Resources\d9.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="fmodex.dll" />
+    <Content Include="fmodex.dll"></Content>
     <Content Include="Resources\circle-blue.png" />
     <Content Include="Resources\circle-green.png" />
     <Content Include="Resources\circle-red.png" />
