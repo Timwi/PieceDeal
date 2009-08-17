@@ -32,16 +32,17 @@
             this.mnuMain = new System.Windows.Forms.MenuStrip();
             this.mnuGame = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuGameNew = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuGameExit = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuMain.SuspendLayout();
             this.SuspendLayout();
             // 
             // pnlMain
             // 
             this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlMain.Location = new System.Drawing.Point(0, 0);
+            this.pnlMain.Location = new System.Drawing.Point(0, 24);
             this.pnlMain.Name = "pnlMain";
             this.pnlMain.RefreshOnResize = false;
-            this.pnlMain.Size = new System.Drawing.Size(585, 475);
+            this.pnlMain.Size = new System.Drawing.Size(585, 451);
             this.pnlMain.TabIndex = 1;
             this.pnlMain.PaintBuffer += new System.Windows.Forms.PaintEventHandler(this.paintBuffer);
             this.pnlMain.Paint += new System.Windows.Forms.PaintEventHandler(this.paint);
@@ -63,7 +64,8 @@
             // mnuGame
             // 
             this.mnuGame.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuGameNew});
+            this.mnuGameNew,
+            this.mnuGameExit});
             this.mnuGame.Name = "mnuGame";
             this.mnuGame.Size = new System.Drawing.Size(46, 20);
             this.mnuGame.Text = "&Game";
@@ -75,6 +77,13 @@
             this.mnuGameNew.Size = new System.Drawing.Size(169, 22);
             this.mnuGameNew.Text = "Start &new game";
             this.mnuGameNew.Click += new System.EventHandler(this.startNewGame);
+            // 
+            // mnuGameExit
+            // 
+            this.mnuGameExit.Name = "mnuGameExit";
+            this.mnuGameExit.Size = new System.Drawing.Size(169, 22);
+            this.mnuGameExit.Text = "E&xit";
+            this.mnuGameExit.Click += new System.EventHandler(this.exit);
             // 
             // Mainform
             // 
@@ -98,6 +107,7 @@
         private System.Windows.Forms.MenuStrip mnuMain;
         private System.Windows.Forms.ToolStripMenuItem mnuGame;
         private System.Windows.Forms.ToolStripMenuItem mnuGameNew;
+        private System.Windows.Forms.ToolStripMenuItem mnuGameExit;
     }
 }
 

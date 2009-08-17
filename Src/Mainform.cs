@@ -812,5 +812,10 @@ namespace PieceDeal
                 pnlMain.Refresh();
             }
         }
+
+        private void exit(object sender, EventArgs e)
+        {
+            Close();
+        }
     }
 }
