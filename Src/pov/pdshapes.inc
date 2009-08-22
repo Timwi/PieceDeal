@@ -4,36 +4,29 @@ camera { location <0, 0, -13> look_at <0, 0, 0> angle 15 }
 
 global_settings {
     assumed_gamma 1
-    max_trace_level 30
-    radiosity {
-        count 50
-        error_bound 2
-        recursion_limit 2
-        nearest_count 8
-        brightness 1
-        normal on
-    }
+    max_trace_level 100
 }
 
-#declare PDgreen = color rgbt<.05, 1, .2, 0.4>;
-#declare PDred = color rgbt<1, 0, .1, 0.4>;
-#declare PDblue = color rgbt<.25, .5, 1, 0.4>;
-#declare PDyellow = color rgbt<1, 1, .15, 0.4>;
+#declare PDred    = color rgbf<1.0,  0.05, 0.05, 0.4>;
+#declare PDgreen  = color rgbf<0.05, 0.8, 0.05, 0.4>;
+#declare PDblue   = color rgbf<0.2,  0.6, 1.0, 0.4>;
+#declare PDyellow = color rgbf<1.0,  0.9, 0.1, 0.4>;
 
 #macro PDShapeLight()
-    light_source {
-        <-12, 12, -15>
-        color <2, 2, 2>
-    }
+    light_source { <-12, 12, -15> color <1, 1, 1> }
 #end
 
 #macro PDShapeMaterial(clr)
     material {
         texture {
             pigment { color clr }
-            normal { bumps 0.15 scale 1 translate 1*x+1*y }
-            finish { phong .5 }
+            finish {
+                ambient 0.5
+                specular 1
+                roughness .02
+            }
         }
+        interior { ior 1.2 }
     }
 #end
 
@@ -71,5 +64,5 @@ global_settings {
 #declare PDcircle = sphere { <0, 0, 0>, 1 scale .4*z }
 
 #macro PDWhite()
-    background { color rgb<1, 1, 1> }
+    box { <-100, -100, 5>, <100, 100, 5.1> pigment { color rgb<2, 2, 2> } }
 #end

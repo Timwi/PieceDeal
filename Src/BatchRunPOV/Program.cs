@@ -19,7 +19,7 @@ namespace BatchRunPOV
             if (args.Length > 0)
                 povCommand = args[0];
 
-            string povArgs = "/RENDER -D +W800 +H600 +A1.0";
+            string povArgs = "/RENDER -D +W800 +H600 +A0.1";
 
             List<Process> runningProcesses = new List<Process>();
 
