@@ -280,7 +280,7 @@ namespace PieceDeal
             // create new pieces if the stock is empty
             if (Program.Settings.Stock.All(d => d == null))
                 for (int i = 0; i < Math.Min(Program.Settings.Stock.Length, Program.Settings.FreeSpaces); i++)
-                    Program.Settings.Stock[i] = new Piece { Colour = Ut.Rnd.Next(0, 4), Shape = Ut.Rnd.Next(0, 4), Locked = false };
+                    Program.Settings.Stock[i] = new Piece { Colour = Rnd.Next(0, 4), Shape = Rnd.Next(0, 4), Locked = false };
 
             pnlMain.Refresh();
         }
@@ -666,8 +666,8 @@ namespace PieceDeal
                     {
                         bool darker = (b[3 * x] > 0);
                         g.TranslateTransform(x, y);
-                        g.RotateTransform((float) (Ut.Rnd.NextDouble() * 40 - 20));
-                        var i = Ut.Rnd.Next(0, 24);
+                        g.RotateTransform((float) (Rnd.NextDouble() * 40 - 20));
+                        var i = Rnd.Next(0, 24);
                         g.FillEllipse(new SolidBrush(Color.FromArgb((darker ? 120 : 134) + i, (darker ? 78 : 88) + i / 2, (darker ? 37 : 43) + i / 3)), -20, -30, 20, 30);
                         g.ResetTransform();
                     }
