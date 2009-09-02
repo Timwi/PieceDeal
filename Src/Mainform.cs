@@ -428,7 +428,7 @@ namespace PieceDeal
             if (dt == null)
             {
                 if (draggingFrom.Type == SlotType.Board && dragging is Joker)
-                    Program.Settings.JokersOnBoard = Program.Settings.JokersOnBoard.Add((Joker) dragging).ToArray();
+                    Program.Settings.JokersOnBoard = Program.Settings.JokersOnBoard.Concat((Joker) dragging).ToArray();
                 else if (draggingFrom.Type == SlotType.Board)
                     Program.Settings.Board[draggingFrom.IndexY][draggingFrom.IndexX] = (Piece) dragging;
                 else if (draggingFrom.Type == SlotType.Stock)
@@ -444,7 +444,7 @@ namespace PieceDeal
             else if (dt.Type == SlotType.Stock && dragging is Piece)
                 Program.Settings.Stock[dt.IndexX] = (Piece) dragging;
             else if (dt.Type == SlotType.Board && dragging is Joker)
-                Program.Settings.JokersOnBoard = Program.Settings.JokersOnBoard.Add(new Joker() { Locked = false, IndexX = dt.IndexX, IndexY = dt.IndexY }).ToArray();
+                Program.Settings.JokersOnBoard = Program.Settings.JokersOnBoard.Concat(new Joker() { Locked = false, IndexX = dt.IndexX, IndexY = dt.IndexY }).ToArray();
             else if (dt.Type == SlotType.Board && dragging is Piece)
                 Program.Settings.Board[dt.IndexY][dt.IndexX] = (Piece) dragging;
             else if (dt.Type == SlotType.Joker && dt.IndexX == 0 && dragging is Joker)
