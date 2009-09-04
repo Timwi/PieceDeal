@@ -4,9 +4,6 @@ using System.Linq;
 using System.Windows.Forms;
 using RT.Util;
 using RT.Util.Forms;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 
 namespace PieceDeal
 {
