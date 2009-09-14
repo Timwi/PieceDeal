@@ -197,6 +197,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y $(ProjectDir)fmodex.dll $(TargetDir)</PostBuildEvent>
+    <PostBuildEvent>xcopy /y $(ProjectDir)fmodex.dll $(TargetDir)
+rd /s /q $(ProjectDir)obj</PostBuildEvent>
   </PropertyGroup>
 </Project>
