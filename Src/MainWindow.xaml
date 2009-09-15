@@ -1,0 +1,19 @@
+﻿<my:ManagedWindow x:Class="PieceDeal.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:my="clr-namespace:PieceDeal"
+    Title="Piece Deal">
+  <Canvas Name="mainCanvas" SizeChanged="resize" MouseUp="cnvMouseUp">
+    <Image Stretch="Uniform" Name="backgroundImage" Source="/PieceDeal;component/Resources/piecedealbackground.png" Height="1536" VerticalAlignment="Bottom" />
+    <Image Canvas.Left="74" Canvas.Top="52" Height="100" Name="dealButton" Stretch="Fill" Width="100" Source="/PieceDeal;component/Resources/deal.png" MouseDown="dealMouseDown" MouseUp="dealMouseUp" MouseEnter="dealMouseEnter" MouseLeave="dealMouseLeave"/>
+    <Rectangle Canvas.Left="222" Canvas.Top="52" Height="100" Name="jokersBox" Width="200" Fill="#40000000" />
+    <Rectangle Canvas.Left="476" Canvas.Top="52" Height="100" Name="nextJokerBox" Width="200" Fill="#40000000" />
+    <TextBlock Canvas.Left="476" Canvas.Top="52" Height="100" Name="nextJokerLabel" Width="200" FontFamily="Calibri" FontSize="18" TextAlignment="Center" Foreground="#ffffffff">Next joker at:</TextBlock>
+    <Rectangle Canvas.Left="62" Canvas.Top="175" Height="264" Name="stockBox" Width="128" Fill="#40000000" />
+    <Rectangle Canvas.Left="222" Canvas.Top="166" Height="273" Name="boardBox" Width="455" Fill="#40000000" />
+    <Rectangle Canvas.Left="62" Canvas.Top="463" Height="71" Name="scoreBox" Width="614" Fill="#40000000" />
+    <Rectangle Canvas.Left="476" Canvas.Top="142" Width="200" Height="10" Fill="#60004000" Name="progressBar" />
+    <Rectangle Canvas.Left="476" Canvas.Top="142" Width="100" Height="10" Fill="#6000FF00" Name="progressBarProgress" />
+    <Rectangle Canvas.Left="222" Canvas.Top="166" Width="100" Height="100" Fill="#20FFFFFF" Name="focusRect" RadiusX="30" RadiusY="30" Visibility="Hidden" />
+  </Canvas>
+</my:ManagedWindow>
