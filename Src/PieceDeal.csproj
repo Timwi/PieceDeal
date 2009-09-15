@@ -1,38 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{4F46F447-9E86-4DF9-9DDC-03E1776CF19F}</ProjectGuid>
+    <ProjectGuid>{EEB18742-BB95-443E-8F1A-0203957D782A}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PieceDeal</RootNamespace>
     <AssemblyName>PieceDeal</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\Builds\$(Configuration)</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <BaseIntermediateOutputPath>..\Builds\$(Configuration)\obj-$(AssemblyName)</BaseIntermediateOutputPath>
     <IntermediateOutputPath>..\Builds\$(Configuration)\obj-$(AssemblyName)</IntermediateOutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>..\Builds\$(Configuration)</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -44,6 +43,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -51,142 +51,89 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="fmod.cs" />
-    <Compile Include="fmod_dsp.cs" />
-    <Compile Include="fmod_errors.cs" />
-    <Compile Include="Mainform.cs">
-      <SubType>Form</SubType>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mainform.Designer.cs">
-      <DependentUpon>Mainform.cs</DependentUpon>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Mainform.resx">
-      <DependentUpon>Mainform.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <Compile Include="Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Animate.cs" />
+    <Compile Include="AnimateBézier.cs" />
+    <Compile Include="AnimateLinear.cs" />
+    <Compile Include="AnimateMultiple.cs" />
+    <Compile Include="Classes.cs" />
+    <Compile Include="ManagedWindow.cs" />
+    <Compile Include="OutlinedText.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
     </Compile>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\piecedealbackground.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\deal.png" />
+    <Resource Include="Resources\dealpressed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\circle-blue.png" />
+    <Resource Include="Resources\circle-green.png" />
+    <Resource Include="Resources\circle-red.png" />
+    <Resource Include="Resources\circle-yellow.png" />
+    <Resource Include="Resources\cone-blue.png" />
+    <Resource Include="Resources\cone-green.png" />
+    <Resource Include="Resources\cone-red.png" />
+    <Resource Include="Resources\cone-yellow.png" />
+    <Resource Include="Resources\cross-blue.png" />
+    <Resource Include="Resources\cross-green.png" />
+    <Resource Include="Resources\cross-red.png" />
+    <Resource Include="Resources\cross-yellow.png" />
+    <Resource Include="Resources\cube-blue.png" />
+    <Resource Include="Resources\cube-green.png" />
+    <Resource Include="Resources\cube-red.png" />
+    <Resource Include="Resources\cube-yellow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\joker.png" />
+    <Resource Include="Resources\lock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\d0.png" />
+    <Resource Include="Resources\d1.png" />
+    <Resource Include="Resources\d2.png" />
+    <Resource Include="Resources\d3.png" />
+    <Resource Include="Resources\d4.png" />
+    <Resource Include="Resources\d5.png" />
+    <Resource Include="Resources\d6.png" />
+    <Resource Include="Resources\d7.png" />
+    <Resource Include="Resources\d8.png" />
+    <Resource Include="Resources\d9.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\RT.Util\Src\RT.Util.csproj">
       <Project>{8D0FE79C-AD8D-475C-9E6F-9CAE85365B5D}</Project>
       <Name>Util</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\lock.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\joker.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\sound_down.ogg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\sound_up.ogg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\deal.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\dealpressed.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\d0.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\d1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\d2.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\d3.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\d4.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\d5.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\d6.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\d7.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\d8.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="BuildPieceDeal.proj" />
-    <None Include="BuildPieceDealSingle.proj" />
-    <None Include="Resources\d9.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="fmodex.dll"></Content>
-    <Content Include="Resources\circle-blue.png" />
-    <Content Include="Resources\circle-green.png" />
-    <Content Include="Resources\circle-red.png" />
-    <Content Include="Resources\circle-yellow.png" />
-    <Content Include="Resources\cone-blue.png" />
-    <Content Include="Resources\cone-green.png" />
-    <Content Include="Resources\cone-red.png" />
-    <Content Include="Resources\cone-yellow.png" />
-    <Content Include="Resources\cross-blue.png" />
-    <Content Include="Resources\cross-green.png" />
-    <Content Include="Resources\cross-red.png" />
-    <Content Include="Resources\cross-yellow.png" />
-    <Content Include="Resources\cube-blue.png" />
-    <Content Include="Resources\cube-green.png" />
-    <Content Include="Resources\cube-red.png" />
-    <Content Include="Resources\cube-yellow.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
@@ -196,7 +143,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <PropertyGroup>
-    <PostBuildEvent>xcopy /y $(ProjectDir)fmodex.dll $(TargetDir)</PostBuildEvent>
-  </PropertyGroup>
 </Project>
