@@ -4,7 +4,7 @@
   <Import Project="..\common\Build\CommonImports.proj"/>
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)'==''">Release</Configuration>
-    <Platform Condition="'$(Platform)'==''">x86</Platform>
+    <Platform Condition="'$(Platform)'==''">Any CPU</Platform>
     <OutputBase>..\..\builds\PieceDeal</OutputBase>
   </PropertyGroup>
 
