@@ -28,7 +28,9 @@ namespace PieceDeal
         protected override void OnRender(DrawingContext drawingContext)
         {
             CreateText();
-            drawingContext.DrawGeometry(Fill, new Pen(Stroke, StrokeThickness), _textGeometry);
+            // DrawGeometry() by default draws the fill first, then the pen. But we want the fill to be "complete" and the outline to be around it.
+            drawingContext.DrawGeometry(null, Stroke, _textGeometry);
+            drawingContext.DrawGeometry(Fill, null, _textGeometry);
         }
 
         /// <summary>
@@ -183,9 +185,9 @@ namespace PieceDeal
         /// <summary>
         /// Specifies the brush to use for the stroke and optional hightlight of the formatted text.
         /// </summary>
-        public Brush Stroke
+        public Pen Stroke
         {
-            get { return (Brush) GetValue(StrokeProperty); }
+            get { return (Pen) GetValue(StrokeProperty); }
             set { SetValue(StrokeProperty, value); }
         }
 
@@ -194,34 +196,10 @@ namespace PieceDeal
         /// </summary>
         public static readonly DependencyProperty StrokeProperty = DependencyProperty.Register(
             "Stroke",
-            typeof(Brush),
+            typeof(Pen),
             typeof(OutlinedText),
             new FrameworkPropertyMetadata(
-                 new SolidColorBrush(Colors.Teal),
-                 FrameworkPropertyMetadataOptions.AffectsRender,
-                 new PropertyChangedCallback(OnOutlineTextInvalidated),
-                 null
-             )
-        );
-
-        /// <summary>
-        ///     The stroke thickness of the font.
-        /// </summary>
-        public double StrokeThickness
-        {
-            get { return (double) GetValue(StrokeThicknessProperty); }
-            set { SetValue(StrokeThicknessProperty, value); }
-        }
-
-        /// <summary>
-        /// Identifies the StrokeThickness dependency property.
-        /// </summary>
-        public static readonly DependencyProperty StrokeThicknessProperty = DependencyProperty.Register(
-            "StrokeThickness",
-            typeof(double),
-            typeof(OutlinedText),
-            new FrameworkPropertyMetadata(
-                 (double) 0,
+                 new Pen(new SolidColorBrush(Colors.Black), 2),
                  FrameworkPropertyMetadataOptions.AffectsRender,
                  new PropertyChangedCallback(OnOutlineTextInvalidated),
                  null

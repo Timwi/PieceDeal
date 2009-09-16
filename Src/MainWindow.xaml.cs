@@ -59,6 +59,10 @@ namespace PieceDeal
         private Polygon[] score3d;
         private Image[] scoreDigits;
         private Image[] nextJokerDigits;
+        private OutlinedText gameOver;
+
+        private LinearGradientBrush gameOverFill = new LinearGradientBrush(Color.FromRgb(255, 128, 64), Color.FromRgb(255, 64, 0), 90);
+        private LinearGradientBrush gameOverStroke = new LinearGradientBrush(Color.FromRgb(32, 0, 0), Color.FromRgb(64, 0, 0), 90);
 
         private class site
         {
@@ -432,8 +436,7 @@ namespace PieceDeal
                 Text = pointsGained.ToString(),
                 Font = new FontFamily("Impact"),
                 FontSize = pieceSize * sizeFactor,
-                Stroke = Brushes.Black,
-                StrokeThickness = pieceSize / 20 * sizeFactor
+                Stroke = new Pen(Brushes.Black, pieceSize / 20 * sizeFactor)
             };
             moveAndResize(scoreText, center.X - scoreText.MinWidth / 2, center.Y - scoreText.MinHeight / 2, scoreText.MinWidth, scoreText.MinHeight);
             ScaleTransform stf = new ScaleTransform(1, 1, scoreText.MinWidth / 2, scoreText.MinHeight + pieceSize / 4);
@@ -617,7 +620,8 @@ namespace PieceDeal
                 }
                 else
                     r = (Rectangle) sites[19].Displays[i];
-                moveAndResize(r, boardLeft + (i % 2) * 3 * boardBox.Width, boardTop + (i / 2) * 3 * boardBox.Height, pieceSize, pieceSize);
+                moveAndResize(r, boardLeft + (i % 2) * 3 * pieceSize, boardTop + (i / 2) * 3 * pieceSize, pieceSize, pieceSize);
+                r.RadiusX = r.RadiusY = pieceSize / 4;
             }
             sites[19].DisplayCenter = new Point(boardLeft + boardBox.Width / 2, boardTop + boardBox.Height / 2);
 
@@ -642,6 +646,45 @@ namespace PieceDeal
             updateInlet(scoreBox, ref score3d);
             updateScore();
             updateNextJokerScore();
+
+            if (Program.Settings.IsGameOver && gameOver == null)
+            {
+                gameOver = new OutlinedText { Font = new FontFamily("Impact"), FontSize = pieceSize * 1.2, Opacity = 0, Text = "GAME OVER" };
+                gameOver.Fill = gameOverFill;
+                gameOver.Stroke = new Pen(gameOverStroke, pieceSize / 5) { LineJoin = PenLineJoin.Round };
+                var stf = new ScaleTransform(0, 0, gameOver.MinWidth / 2, gameOver.MinHeight / 2);
+                gameOver.RenderTransform = stf;
+
+                var anim = new AnimateLinear(0, 1, TimeSpan.FromSeconds(2), v =>
+                {
+                    stf.ScaleX = v;
+                    stf.ScaleY = v;
+                    gameOver.Opacity = v;
+                });
+
+                mainCanvas.Children.Add(gameOver);
+            }
+            else if (!Program.Settings.IsGameOver && gameOver != null)
+            {
+                var go = gameOver;
+                gameOver = null;
+                var stf = new ScaleTransform(1, 1, go.Width / 2, go.Height / 2);
+                go.RenderTransform = stf;
+                var anim = new AnimateLinear(1, 2, TimeSpan.FromSeconds(1), v =>
+                {
+                    stf.ScaleX = v;
+                    stf.ScaleY = v;
+                    go.Opacity = 2 - v;
+                });
+                anim.Completed += () => mainCanvas.Children.Remove(go);
+            }
+
+            if (gameOver != null)
+            {
+                gameOver.Stroke = new Pen(gameOverStroke, pieceSize / 5) { LineJoin = PenLineJoin.Round };
+                gameOver.FontSize = pieceSize * 1.2;
+                moveAndResize(gameOver, mainCanvas.ActualWidth / 2 - gameOver.MinWidth / 2, mainCanvas.ActualHeight / 2 - gameOver.MinHeight / 2, gameOver.MinWidth, gameOver.MinHeight);
+            }
         }
 
         private void updateScore()
@@ -714,7 +757,6 @@ namespace PieceDeal
 
             double theoreticalDigitWidth = nextJokerBox.Width * 0.9 / score.Length;
             double imageSourceWidth = theoreticalDigitWidth * 3 / 2;
-            double offset = (imageSourceWidth - theoreticalDigitWidth) / 2 - nextJokerBox.Width * 0.05;
 
             FormattedText ft = new FormattedText("Next joker at:", CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface(nextJokerLabel.FontFamily, nextJokerLabel.FontStyle, nextJokerLabel.FontWeight, nextJokerLabel.FontStretch), nextJokerLabel.FontSize, Brushes.Black);
             double y = Canvas.GetTop(nextJokerBox) + nextJokerBox.Height / 2 + ft.Height / 2 - progressBar.Height / 2 - imageSourceWidth / 2;
@@ -727,16 +769,18 @@ namespace PieceDeal
                 Array.Copy(nextJokerDigits, 0, newScoreDigits, score.Length - nextJokerDigits.Length, nextJokerDigits.Length);
                 nextJokerDigits = newScoreDigits;
             }
+            double offset = (imageSourceWidth - theoreticalDigitWidth) / 2 - nextJokerBox.Width * 0.05 + (nextJokerDigits.Length - score.Length) * theoreticalDigitWidth;
             int? firstChange = null;
             for (int i = 0; i < nextJokerDigits.Length; i++)
             {
                 int s = i + score.Length - nextJokerDigits.Length;
+                bool makeNull = false;
                 if (s < 0 && nextJokerDigits[i] != null)
                 {
                     if (firstChange == null)
                         firstChange = i;
                     var sd = nextJokerDigits[i];
-                    nextJokerDigits[i] = null;
+                    makeNull = true;
                     var sf = new ScaleTransform(1, 1, imageSourceWidth / 2, imageSourceWidth / 2);
                     sd.RenderTransform = sf;
                     Animate.LaterMs(50 * (i - firstChange.Value + 2), () =>
@@ -773,6 +817,8 @@ namespace PieceDeal
 
                 if (nextJokerDigits[i] != null)
                     moveAndResize(nextJokerDigits[i], Canvas.GetLeft(nextJokerBox) - offset + theoreticalDigitWidth * i, y, imageSourceWidth, imageSourceWidth);
+                if (makeNull)
+                    nextJokerDigits[i] = null;
             }
         }
 
@@ -794,7 +840,7 @@ namespace PieceDeal
             moveAndResize(rct, x, y, width, height);
             if (rotateLeft || rotateRight)
                 rct.RenderTransform = new RotateTransform { CenterX = width / 2, CenterY = height / 2, Angle = rotateLeft ? -45 : 45 };
-            rct.RadiusX = rct.RadiusY = pieceSize / 2;
+            rct.RadiusX = rct.RadiusY = pieceSize / 4;
             center = new Point(x + width / 2, y + height / 2);
         }
 
@@ -1110,9 +1156,66 @@ namespace PieceDeal
             }
         }
 
-        private void newGame(object sender, RoutedEventArgs e)
+        private void newGame()
         {
-            MessageBox.Show("Cannot");
+            var getRidOf = new List<Image>();
+            foreach (var s in Program.Settings.Stock.Where(c => c != null))
+            {
+                if (s.Image != null)
+                    getRidOf.Add(s.Image);
+                if (s.LockImage != null)
+                    getRidOf.Add(s.LockImage);
+            }
+            foreach (var b in Program.Settings.Board.SelectMany(r => r).Where(c => c != null))
+            {
+                if (b.Image != null)
+                    getRidOf.Add(b.Image);
+                if (b.LockImage != null)
+                    getRidOf.Add(b.LockImage);
+            }
+            foreach (var j in Program.Settings.JokersOnBoard.Concat(Program.Settings.UnusedJokers).Where(c => c != null))
+            {
+                if (j.Image != null)
+                    getRidOf.Add(j.Image);
+                if (j.LockImage != null)
+                    getRidOf.Add(j.LockImage);
+            }
+            foreach (var tag in getRidOf.Select(img => img.Tag as ImageTag))
+                if (tag != null)
+                    tag.AboutToDisappear = true;
+
+            var stfs = new ScaleTransform[getRidOf.Count];
+            for (int i = 0; i < stfs.Length; i++)
+            {
+                stfs[i] = new ScaleTransform(1, 1, mainCanvas.ActualWidth / 2 - Canvas.GetLeft(getRidOf[i]), mainCanvas.ActualHeight / 2 - Canvas.GetTop(getRidOf[i]));
+                getRidOf[i].RenderTransform = stfs[i];
+            }
+            var anim = new AnimateLinear(1, 2, TimeSpan.FromSeconds(1), v =>
+            {
+                for (int i = 0; i < stfs.Length; i++)
+                {
+                    stfs[i].ScaleX = v;
+                    stfs[i].ScaleY = v;
+                    getRidOf[i].Opacity = 2 - v;
+                }
+            });
+            anim.Completed += () =>
+            {
+                foreach (var image in getRidOf)
+                    mainCanvas.Children.Remove(image);
+            };
+
+            Program.Settings.StartNewGame();
+            updateImages();
+        }
+
+        private void keyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F2)
+            {
+                if (Program.Settings.IsGameOver || MessageBox.Show("Are you sure you wish to abandon this game and start a new one?", "New game", MessageBoxButton.YesNo, MessageBoxImage.Hand) == MessageBoxResult.Yes)
+                    newGame();
+            }
         }
     }
 }
