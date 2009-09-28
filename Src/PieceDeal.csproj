@@ -76,7 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Animate.cs" />
-    <Compile Include="AnimateBézier.cs" />
+    <Compile Include="AnimateBezier.cs" />
     <Compile Include="AnimateLinear.cs" />
     <Compile Include="AnimateMultiple.cs" />
     <Compile Include="Classes.cs" />
