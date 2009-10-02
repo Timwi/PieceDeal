@@ -453,15 +453,21 @@ namespace PieceDeal
                 return;
 
             var tag = image.Tag as ImageTag;
+            ScaleTransform stf;
+
             if (tag == null)
             {
-                mainCanvas.Children.Remove(image);
-                return;
+                stf = new ScaleTransform(1, 1, mainCanvas.ActualWidth / 2 - Canvas.GetLeft(image) + pieceSize * Rnd.NextDouble(-2, 2), mainCanvas.ActualHeight / 2 - Canvas.GetTop(image) + pieceSize * Rnd.NextDouble(-2, 2));
+                image.RenderTransform = stf;
+            }
+            else
+            {
+                tag.AboutToDisappear = true;
+                stf = tag.ScaleTransform;
+                stf.CenterX = mainCanvas.ActualWidth / 2 - Canvas.GetLeft(image) + pieceSize * Rnd.NextDouble(-2, 2);
+                stf.CenterY = mainCanvas.ActualHeight / 2 - Canvas.GetTop(image) + pieceSize * Rnd.NextDouble(-2, 2);
             }
             moveAfter(image, null);
-            tag.AboutToDisappear = true;
-
-            var stf = tag.ScaleTransform;
             var anim = new AnimateLinear(1, 2, TimeSpan.FromMilliseconds(750), v => { stf.ScaleX = v; stf.ScaleY = v; image.Opacity = 2 - v; });
             anim.Completed += () => mainCanvas.Children.Remove(image);
         }
@@ -1187,7 +1193,7 @@ namespace PieceDeal
             var stfs = new ScaleTransform[getRidOf.Count];
             for (int i = 0; i < stfs.Length; i++)
             {
-                stfs[i] = new ScaleTransform(1, 1, mainCanvas.ActualWidth / 2 - Canvas.GetLeft(getRidOf[i]), mainCanvas.ActualHeight / 2 - Canvas.GetTop(getRidOf[i]));
+                stfs[i] = new ScaleTransform(1, 1, mainCanvas.ActualWidth / 2 - Canvas.GetLeft(getRidOf[i]) + pieceSize * Rnd.NextDouble(-5, 5), mainCanvas.ActualHeight / 2 - Canvas.GetTop(getRidOf[i]) + pieceSize * Rnd.NextDouble(-5, 5));
                 getRidOf[i].RenderTransform = stfs[i];
             }
             var anim = new AnimateLinear(1, 2, TimeSpan.FromSeconds(1), v =>
