@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Windows.Media;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Markup;
+using System.Windows.Media;
 
 namespace PieceDeal
 {
