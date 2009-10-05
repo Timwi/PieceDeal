@@ -207,6 +207,8 @@ namespace PieceDeal
 
         private void deal()
         {
+            if (animating)
+                return;
             animating = true;
             double delay = 0;
 
