@@ -1,5 +1,5 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
-         DefaultTargets="Prepare;Build;Merge;Installer"
+         DefaultTargets="Prepare;Build;Merge"
          ToolsVersion="3.5">
   <Import Project="..\common\Build\CommonImports.proj"/>
   <PropertyGroup>
@@ -33,11 +33,6 @@
     <Copy SourceFiles="@(UnmergedFiles)" DestinationFolder="$(OutputPath)\Merged\%(RecursiveDir)"/>
     <MakeDir Directories="$(OutputPath)\Merged"/>
     <Exec Command='"$(ILMerge)" "/out:$(OutputPath)\Merged\PieceDeal.exe" "$(OutputPath)\Raw\PieceDeal.exe" "$(OutputPath)\Raw\RT.Util.dll"'/>
-  </Target>
-
-
-  <Target Name="Installer" DependsOnTargets="Merge">
-    <Warning Text="The Installer task is not yet implemented."/>
   </Target>
 
 
