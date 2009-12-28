@@ -79,7 +79,7 @@ namespace PieceDeal
         private List<UIElement> firstUpdate = new List<UIElement>();
 
         public MainWindow()
-            : base(Program.Settings)
+            : base(Program.Settings.MainWindowSettings)
         {
             sites = new site[20];
             // horizontal rows

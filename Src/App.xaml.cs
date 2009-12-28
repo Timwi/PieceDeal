@@ -12,7 +12,7 @@ namespace PieceDeal
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            SettingsUtil.LoadSettings(out Program.Settings, "PieceDeal");
+            SettingsUtil.LoadSettings(out Program.Settings);
             if (Program.Settings == null || !Program.Settings.IsValid)
             {
 #if DEBUG
@@ -25,7 +25,7 @@ namespace PieceDeal
 
         protected override void OnExit(ExitEventArgs e)
         {
-            SettingsUtil.SaveSettings(Program.Settings, "PieceDeal", SettingsUtil.OnFailure.DoNothing);
+            Program.Settings.SaveQuiet();
             base.OnExit(e);
         }
     }

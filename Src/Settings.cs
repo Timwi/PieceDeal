@@ -2,23 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using RT.Util;
 
 namespace PieceDeal
 {
-    internal class Settings : ManagedWindow.Settings
+    [Settings("PieceDeal", SettingsKind.UserSpecific)]
+    class Settings : SettingsBase
     {
-        internal Piece[] Stock;
-        internal Piece[][] Board;
-        internal Joker[] UnusedJokers;
-        internal Joker[] JokersOnBoard;
-        internal int NextJokerAt;
-        internal int NextJokerAtPrev;
-        internal int NextJokerAtStep;
-        internal int Score;
+        public Piece[] Stock;
+        public Piece[][] Board;
+        public Joker[] UnusedJokers;
+        public Joker[] JokersOnBoard;
+        public int NextJokerAt;
+        public int NextJokerAtPrev;
+        public int NextJokerAtStep;
+        public int Score;
+
+        public ManagedWindow.Settings MainWindowSettings = new ManagedWindow.Settings();
 
         public Settings() { StartNewGame(); }
 
-        internal void StartNewGame()
+        public void StartNewGame()
         {
             Stock = new Piece[4];
             Board = new[] { new Piece[4], new Piece[4], new Piece[4], new Piece[4] };
@@ -30,7 +34,7 @@ namespace PieceDeal
             NextJokerAtStep = 250;
         }
 
-        internal bool IsValid
+        public bool IsValid
         {
             get
             {
@@ -56,7 +60,7 @@ namespace PieceDeal
             }
         }
 
-        internal int FreeSpaces
+        public int FreeSpaces
         {
             get
             {
@@ -69,7 +73,7 @@ namespace PieceDeal
             }
         }
 
-        internal bool IsGameOver
+        public bool IsGameOver
         {
             get
             {
@@ -93,14 +97,14 @@ namespace PieceDeal
         }
     }
 
-    internal static class Program
+    static class Program
     {
-        internal static Settings Settings;
+        public static Settings Settings;
 
         /// <summary>
         /// Returns true if and only if the input sequence has at least four elements, and the first four elements constitute two pairs of equal elements.
         /// </summary>
-        internal static bool TwoPairs<T>(this IEnumerable<T> source) where T : IEquatable<T>
+        public static bool TwoPairs<T>(this IEnumerable<T> source) where T : IEquatable<T>
         {
             var e = source.GetEnumerator();
             if (!e.MoveNext()) return false;
@@ -119,7 +123,7 @@ namespace PieceDeal
         /// <summary>
         /// Returns true if and only if the input sequence has at least three elements, and the first three elements contain two elements that are equal.
         /// </summary>
-        internal static bool OnePair<T>(this IEnumerable<T> source) where T : IEquatable<T>
+        public static bool OnePair<T>(this IEnumerable<T> source) where T : IEquatable<T>
         {
             var e = source.GetEnumerator();
             if (!e.MoveNext()) return false;
