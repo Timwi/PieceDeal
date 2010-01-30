@@ -1,5 +1,5 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
-         DefaultTargets="Prepare;Build;Merge"
+         DefaultTargets="Prepare;Build"
          ToolsVersion="3.5">
   <Import Project="..\common\Build\CommonImports.proj"/>
   <PropertyGroup>
@@ -25,6 +25,7 @@
   </Target>
 
 
+  <!--
   <Target Name="Merge" DependsOnTargets="Build">
     <ItemGroup>
       <UnmergedFiles Include="$(OutputPath)\Raw\**"
@@ -34,6 +35,7 @@
     <MakeDir Directories="$(OutputPath)\Merged"/>
     <Exec Command='"$(ILMerge)" "/out:$(OutputPath)\Merged\PieceDeal.exe" "$(OutputPath)\Raw\PieceDeal.exe" "$(OutputPath)\Raw\RT.Util.dll"'/>
   </Target>
+  -->
 
 
 </Project>
