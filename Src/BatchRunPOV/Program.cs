@@ -85,7 +85,7 @@ namespace BatchRunPOV
         /// Expects two 800x600 bitmaps which represent a graphic against a black and a white background.
         /// Returns an approximation of the graphic with alpha transparency.
         /// </summary>
-        internal static Bitmap createAlphaBitmap(Bitmap bmpBlack, Bitmap bmpWhite)
+        static Bitmap createAlphaBitmap(Bitmap bmpBlack, Bitmap bmpWhite)
         {
             Bitmap output = new Bitmap(600, 600, PixelFormat.Format32bppArgb);
             unsafe

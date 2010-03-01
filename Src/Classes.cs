@@ -10,46 +10,46 @@ using System.Windows;
 
 namespace PieceDeal
 {
-    internal class Piece : IEqualityComparer<Piece>, IEquatable<Piece>
+    class Piece : IEqualityComparer<Piece>, IEquatable<Piece>
     {
-        internal int Shape;
-        internal int Colour;
-        internal bool Locked;
+        public int Shape;
+        public int Colour;
+        public bool Locked;
 
         [XmlIgnore]
-        internal Image Image;
+        public Image Image;
         [XmlIgnore]
-        internal Image LockImage;
+        public Image LockImage;
 
         public bool Equals(Piece x, Piece y) { return x.Colour == y.Colour && x.Shape == y.Shape; }
         public int GetHashCode(Piece obj) { return (Colour.ToString() + Shape.ToString()).GetHashCode(); }
         public bool Equals(Piece other) { return other.Colour == Colour && other.Shape == Shape; }
     }
 
-    internal class Joker
+    class Joker
     {
-        internal int IndexX;
-        internal int IndexY;
-        internal bool Locked;
+        public int IndexX;
+        public int IndexY;
+        public bool Locked;
 
         [XmlIgnore]
-        internal Image Image;
+        public Image Image;
         [XmlIgnore]
-        internal Image LockImage;
+        public Image LockImage;
     }
 
-    internal enum SlotType
+    enum SlotType
     {
         Stock,
         Board,
         Joker
     };
 
-    internal class Slot : IEquatable<Slot>
+    class Slot : IEquatable<Slot>
     {
-        internal SlotType Type;
-        internal int IndexX;
-        internal int IndexY;
+        public SlotType Type;
+        public int IndexX;
+        public int IndexY;
 
         public bool Equals(Slot other)
         {
@@ -64,7 +64,7 @@ namespace PieceDeal
         }
     }
 
-    internal class ImageTag
+    class ImageTag
     {
         public Slot Slot;
         public bool IsJoker;
