@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("PieceDeal")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Aldaray")]
+[assembly: AssemblyCompany("CuteBits")]
 [assembly: AssemblyProduct("PieceDeal")]
-[assembly: AssemblyCopyright("Copyright © Aldaray 2009")]
+[assembly: AssemblyCopyright("Copyright © CuteBits 2009")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,5 +51,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.52010.50130")]
-[assembly: AssemblyFileVersion("1.0.52010.50130")]
+[assembly: AssemblyVersion("1.0.9999.9999")]
+[assembly: AssemblyFileVersion("1.0.9999.9999")]
