@@ -81,6 +81,8 @@ namespace PieceDeal
         public MainWindow()
             : base(Program.Settings.MainWindowSettings)
         {
+            RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.HighQuality);
+
             sites = new site[20];
             // horizontal rows
             for (int i = 0; i < 4; i++)
