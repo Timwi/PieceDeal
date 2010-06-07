@@ -1,4 +1,5 @@
 ﻿using System;
+using RT.Util;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -222,6 +223,7 @@ namespace PieceDeal
         #region Settings-related
 
         /// <summary>Holds the settings of the <see cref="ManagedForm"/>.</summary>
+        [RummageNoRemoveAnything, RummageNoRenameAnything]
         public class Settings
         {
             /// <summary>Holds form dimensions for each screen resolution.</summary>
@@ -229,6 +231,7 @@ namespace PieceDeal
         }
 
         /// <summary>Stores the size, position and maximized state of the form.</summary>
+        [RummageNoRemoveAnything, RummageNoRenameAnything]
         public class WindowDimensions
         {
             /// <summary>Stores the left (X) coordinate of the form when not maximized.</summary>
