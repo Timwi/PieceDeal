@@ -537,7 +537,7 @@ namespace PieceDeal
                     return new Point(Canvas.GetLeft(jokersBox) + slot.IndexX * pieceSize, Canvas.GetTop(jokersBox));
             }
 
-            throw new InternalError("Unrecognized slot type in pointFromSlot()");
+            throw new InternalErrorException("Unrecognized slot type in pointFromSlot()");
         }
 
         private Slot slotFromPoint(Point p) { return slotFromPoint(p.X, p.Y); }
