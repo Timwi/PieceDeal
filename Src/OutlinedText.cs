@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace PieceDeal
 {
-    public class OutlinedText : FrameworkElement, IAddChild
+    public class OutlinedText : FrameworkElement
     {
         private Geometry _textGeometry;
 
@@ -17,7 +17,7 @@ namespace PieceDeal
         /// <param name="e">Event arguments for the dependency property.</param>
         private static void OnOutlineTextInvalidated(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((OutlinedText) d).CreateText();
+            ((OutlinedText) d).updateGeometry();
         }
 
 
@@ -27,16 +27,14 @@ namespace PieceDeal
         /// <param name="drawingContext">Drawing context of the OutlineText control.</param>
         protected override void OnRender(DrawingContext drawingContext)
         {
-            CreateText();
+            updateGeometry();
             // DrawGeometry() by default draws the fill first, then the pen. But we want the fill to be "complete" and the outline to be around it.
             drawingContext.DrawGeometry(null, Stroke, _textGeometry);
             drawingContext.DrawGeometry(Fill, null, _textGeometry);
         }
 
-        /// <summary>
-        /// Create the outline geometry based on the formatted text.
-        /// </summary>
-        public void CreateText()
+        /// <summary>Create the outline geometry based on the formatted text.</summary>
+        private void updateGeometry()
         {
             FontStyle fontStyle = FontStyles.Normal;
             FontWeight fontWeight = FontWeights.Medium;
@@ -183,7 +181,7 @@ namespace PieceDeal
         );
 
         /// <summary>
-        /// Specifies the brush to use for the stroke and optional hightlight of the formatted text.
+        /// Specifies the brush to use for the stroke and optional highlight of the formatted text.
         /// </summary>
         public Pen Stroke
         {
@@ -229,14 +227,5 @@ namespace PieceDeal
                  null
              )
         );
-
-        public void AddChild(Object value)
-        {
-        }
-
-        public void AddText(string value)
-        {
-            Text = value;
-        }
     }
 }
