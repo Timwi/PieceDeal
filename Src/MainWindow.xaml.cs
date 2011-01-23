@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using RT.Util;
@@ -105,10 +106,6 @@ namespace PieceDeal
             animating = false;
 
             InitializeComponent();
-            OutlinedText ot = new OutlinedText { Font = new FontFamily("Impact"), FontSize = 128 };
-            mainCanvas.Children.Add(ot);
-            moveAndResize(ot, mainCanvas.ActualWidth + pieceSize, mainCanvas.ActualHeight + pieceSize, ot.MinWidth, ot.MinHeight);
-            mainCanvas.Children.Remove(ot);
         }
 
         private void resize(object sender, SizeChangedEventArgs e)
@@ -445,9 +442,10 @@ namespace PieceDeal
             moveAndResize(scoreText, center.X - scoreText.MinWidth / 2, center.Y - scoreText.MinHeight / 2, scoreText.MinWidth, scoreText.MinHeight);
             ScaleTransform stf = new ScaleTransform(1, 1, scoreText.MinWidth / 2, scoreText.MinHeight + pieceSize / 4);
             scoreText.RenderTransform = stf;
-            // scoreText.Effect = new DropShadowEffect { Opacity = 0.7, ShadowDepth = pieceSize / 10 };
+            var dropEffect = new DropShadowEffect { Opacity = 0.7, ShadowDepth = pieceSize / 10 };
+            scoreText.Effect = dropEffect;
             mainCanvas.Children.Add(scoreText);
-            var scoreAnim = new AnimateLinear(1, 2, TimeSpan.FromMilliseconds(1000), v => { scoreText.Opacity = (2 - v); stf.ScaleX = v; stf.ScaleY = v; });
+            var scoreAnim = new AnimateLinear(1, 2, TimeSpan.FromMilliseconds(1000), v => { scoreText.Opacity = (2 - v); stf.ScaleX = v; stf.ScaleY = v; dropEffect.ShadowDepth = (pieceSize * v) / 20; });
             scoreAnim.Completed += () => mainCanvas.Children.Remove(scoreText);
         }
 

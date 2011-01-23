@@ -42,7 +42,7 @@ namespace PieceDeal
 
         private void elapseInThread(object sender, ElapsedEventArgs e)
         {
-            _dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(elapse));
+            _dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(elapse));
         }
 
         private void elapse()
