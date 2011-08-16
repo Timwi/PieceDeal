@@ -56,8 +56,7 @@ namespace BatchRunPOV
                 }
             }
 
-            return;
-
+#if false
             int maxDigit = 9;
             for (int i = 0; i <= maxDigit; i++)
             {
@@ -79,6 +78,7 @@ namespace BatchRunPOV
                 string blackFileName = i.ToString() + "-black.bmp";
                 createAlphaBitmap(new Bitmap(blackFileName), new Bitmap(whiteFileName)).Save(i.ToString() + ".png");
             }
+#endif
         }
 
         /// <summary>
