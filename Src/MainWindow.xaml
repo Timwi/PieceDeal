@@ -1,7 +1,7 @@
-﻿<my:ManagedWindow x:Class="PieceDeal.MainWindow"
+﻿<rt:ManagedWindow x:Class="PieceDeal.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:my="clr-namespace:PieceDeal"
+    xmlns:rt="clr-namespace:RT.Util.Forms;assembly=RT.Util"
     Title="Piece Deal" KeyDown="keyDown">
   <Canvas Name="mainCanvas" SizeChanged="resize" MouseUp="cnvMouseUp">
     <Image Stretch="Uniform" Name="backgroundImage" Source="/PieceDeal;component/Resources/piecedealbackground.png" Height="1536" VerticalAlignment="Bottom" />
@@ -16,4 +16,4 @@
     <Rectangle Canvas.Left="476" Canvas.Top="142" Width="100" Height="10" Fill="#6000FF00" Name="progressBarProgress" />
     <Rectangle Canvas.Left="222" Canvas.Top="166" Width="100" Height="100" Fill="#20FFFFFF" Name="focusRect" RadiusX="30" RadiusY="30" Visibility="Hidden" />
   </Canvas>
-</my:ManagedWindow>
+</rt:ManagedWindow>

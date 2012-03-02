@@ -78,7 +78,6 @@
     <Compile Include="AnimateLinear.cs" />
     <Compile Include="AnimateMultiple.cs" />
     <Compile Include="Classes.cs" />
-    <Compile Include="ManagedWindow.cs" />
     <Compile Include="OutlinedText.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using RT.Util;
 using RT.Util.ExtensionMethods;
+using RT.Util.Forms;
 
 namespace PieceDeal
 {
