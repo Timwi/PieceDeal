@@ -15,7 +15,7 @@ namespace BatchRunPOV
         {
             if (args.Length > 1)
                 Directory.SetCurrentDirectory(args[1]);
-            string povCommand = "pov";
+            string povCommand = @"D:\PovRay\bin\pvengine64.exe";
             if (args.Length > 0)
                 povCommand = args[0];
 
@@ -82,7 +82,7 @@ namespace BatchRunPOV
         }
 
         /// <summary>
-        /// Expects two 800x600 bitmaps which represent a graphic against a black and a white background.
+        /// Expects two 600×600 bitmaps which represent a graphic against a black and a white background.
         /// Returns an approximation of the graphic with alpha transparency.
         /// </summary>
         static Bitmap createAlphaBitmap(Bitmap bmpBlack, Bitmap bmpWhite)
