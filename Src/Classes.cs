@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
-using RT.Util.Xml;
-using System.Windows.Media.Animation;
 using System.Windows.Media;
-using System.Windows;
+using RT.Util.Serialization;
 
 namespace PieceDeal
 {
@@ -16,9 +12,9 @@ namespace PieceDeal
         public int Colour;
         public bool Locked;
 
-        [XmlIgnore]
+        [ClassifyIgnore]
         public Image Image;
-        [XmlIgnore]
+        [ClassifyIgnore]
         public Image LockImage;
 
         public bool Equals(Piece x, Piece y) { return x.Colour == y.Colour && x.Shape == y.Shape; }
@@ -32,9 +28,9 @@ namespace PieceDeal
         public int IndexY;
         public bool Locked;
 
-        [XmlIgnore]
+        [ClassifyIgnore]
         public Image Image;
-        [XmlIgnore]
+        [ClassifyIgnore]
         public Image LockImage;
     }
 
