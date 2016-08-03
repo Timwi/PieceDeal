@@ -207,6 +207,8 @@ namespace PieceDeal
 
         private void deal()
         {
+            Program.Settings.SaveQuiet();
+
             if (animating)
                 return;
             animating = true;
@@ -1224,6 +1226,10 @@ namespace PieceDeal
             {
                 if (Program.Settings.IsGameOver || MessageBox.Show("Are you sure you wish to abandon this game and start a new one?", "New game", MessageBoxButton.YesNo, MessageBoxImage.Hand) == MessageBoxResult.Yes)
                     newGame();
+            }
+            else if (e.Key == Key.Enter)
+            {
+                deal();
             }
         }
     }
