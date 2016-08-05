@@ -656,7 +656,6 @@ namespace PieceDeal
             updateInlet(boardBox, ref board3d);
             updateInlet(scoreBox, ref score3d);
             updateScore();
-            updateNextJokerScore();
 
             if (Program.Settings.IsGameOver && gameOver == null)
             {
@@ -756,6 +755,7 @@ namespace PieceDeal
                 if (scoreDigits[i] != null)
                     moveAndResize(scoreDigits[i], Canvas.GetLeft(scoreBox) + scoreBox.Width - (scoreDigits.Length - i) * pieceSize * 2 / 3 - pieceSize / 5, Canvas.GetTop(scoreBox), pieceSize, pieceSize);
             }
+            updateNextJokerScore();
         }
 
         private void updateNextJokerScore()
